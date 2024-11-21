@@ -1,0 +1,5 @@
+name: wine
+channels:
+  - defaults
+  - conda-forge
+prefix: /Users/daria/miniforge3/envs/wine
