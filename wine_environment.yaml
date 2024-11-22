@@ -2,4 +2,32 @@ name: wine
 channels:
   - defaults
   - conda-forge
-prefix: /Users/daria/miniforge3/envs/wine
+dependencies:
+  - python>=3.11,<3.13
+  - pip
+  - ipykernel
+  - nb_conda_kernels
+  - otter-grader=6.*
+  - altair-all=5.4.*
+  - vegafusion<2
+  - vega_datasets
+  - scipy
+  - matplotlib>=3.2.2
+  - scikit-learn
+  - requests>=2.24.0
+  - graphviz
+  - python-graphviz
+  - eli5
+  - shap
+  - jinja2
+  - lightgbm
+  - spacy
+  - xgboost
+  - catboost
+  - nltk
+  - imbalanced-learn
+  - pip:
+    - mglearn
+    - spacymoji
+    - altair_ally>=0.1.1
+prefix: /Users/zhiweizhang/miniforge3/envs/wine
