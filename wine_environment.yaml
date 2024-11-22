@@ -30,4 +30,3 @@ dependencies:
     - mglearn
     - spacymoji
     - altair_ally>=0.1.1
-prefix: /Users/zhiweizhang/miniforge3/envs/wine
