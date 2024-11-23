@@ -1,4 +1,4 @@
-# Wine Color Classification
+# Wine Chromatic Profile Classification
 Authors: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
 
 DSCI 522 (Data Science Workflows) Project
