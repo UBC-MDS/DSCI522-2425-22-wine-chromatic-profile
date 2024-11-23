@@ -1,0 +1,22 @@
+name: wine
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - altair-all=5.4
+  - ipykernel
+  - matplotlib[version='>=3.2.2']
+  - nb_conda_kernels
+  - numpy
+  - pandas
+  - pip
+  - python=3.12
+  - scikit-learn
+  - scipy
+  - ucimlrepo
+  - vega_datasets
+  - vegafusion=1.6.9
+  - pip:
+      - altair_ally>=0.1.1
+
+
