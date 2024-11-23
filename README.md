@@ -1,5 +1,5 @@
 # Wine Chromatic Profile Classification
-Authors: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
+Authors: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 
 DSCI 522 (Data Science Workflows) Project
 
@@ -15,7 +15,7 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 The conda environment file wine_environment.yaml contains all library dependencies used in this project. To reproduce the repot, follow these steps:
 1. Clone this repository `git clone`
 2. Create the environment (you only need to do this once): run 
-    `conda env create -f wine_environment.yaml`   
+    `conda env create -f environment.yaml`   
         or  
     `conda-lock install --name WINE conda-lock.yml`  
 
