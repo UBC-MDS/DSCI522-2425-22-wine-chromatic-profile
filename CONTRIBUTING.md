@@ -1,6 +1,6 @@
-# Contributing to the Wine Quality Predictor project
+# Contributing to the Wine Chromatic Profile Predictor project
 
-This outlines how to propose a change to the Wine Quality Predictor project. 
+This outlines how to propose a change to the Wine Chromatic Profile Predictor project. 
 
 ### Fixing typos
 
