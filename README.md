@@ -9,7 +9,7 @@ Here we attempt to build a classification model to predict the class of wine (re
 The data set we used in this project was created by By P. Cortez, A. Cerdeira, Fernando Almeida, Telmo Matos, J. Reis. 2009 as part of Decision Support Systems publication, and is available on UCI Machine Learning Repository [here](https://archive.ics.uci.edu/dataset/186/wine+quality). 
 
 # Report
-The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-wine-quality/).
+The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-wine-chromatic-profile/).
 
 # Usage and Dependencies
 The conda environment file wine_environment.yaml contains all library dependencies used in this project. To reproduce the repot, follow these steps:
