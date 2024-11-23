@@ -14,7 +14,14 @@ The final report will be available soon.
 # Usage and Dependencies
 The conda environment file wine_environment.yaml contains all library dependencies used in this project. To reproduce the repot, follow these steps:
 1. Clone this repository `git clone`
-2. Create the environment: run conda `env create -f wine_environment.yaml` (you only need to do this once). 
+2. Create the environment (you only need to do this once): run 
+    `conda env create -f wine_environment.yaml`   
+        or  
+    `conda-lock install --name WINE conda-lock.yml`  
+
+    Note if using conda lock, need to install these two packages as well:  
+    `conda install -c conda-forge conda-lock`  
+    `conda install -c conda-forge mamba`  
 3. Launch Jupyter Lab from your base environment, and select the `wine` kernel from within Jupyter.
 
 # References
