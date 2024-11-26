@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - altair-all=5.4
+  - pandera=0.20.2
   - ipykernel=6.29.5
   - matplotlib[version='3.9.2']
   - nb_conda_kernels=2.5.1
