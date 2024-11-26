@@ -1,0 +1,7 @@
+services:
+  wine-color-predictor:
+    image: bchangs821/dsci522-2425-25-heart_disease_predictor:latest 
+    ports:
+      - "8080:8080" 
+    volumes:
+      - ./data:/app/data 
