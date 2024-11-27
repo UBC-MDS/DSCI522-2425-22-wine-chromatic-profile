@@ -12,17 +12,14 @@ The data set we used in this project was created by By P. Cortez, A. Cerdeira, F
 The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-wine-chromatic-profile/).
 
 # Usage and Dependencies
-The conda environment file wine_environment.yaml contains all library dependencies used in this project. To reproduce the repot, follow these steps:
-1. Clone this repository `git clone`
-2. Create the environment (you only need to do this once): run 
-    `conda env create -f environment.yaml`   
-        or  
-    `conda-lock install --name WINE conda-lock.yml`  
-
-    Note if using conda lock, need to install these two packages as well:  
-    `conda install -c conda-forge conda-lock`  
-    `conda install -c conda-forge mamba`  
-3. Launch Jupyter Lab from your base environment, and select the `wine` kernel from within Jupyter.
+The conda environment file wine_environment.yaml contains all library dependencies used in this project. To reproduce the repot, follow these steps:  
+1. Clone this repository `git clone`  
+2. Enter the project direcory and run:  
+    ```
+    docker-compose down --rmi all --volumes
+    docker-compose up
+    ```
+3. Follow the instructions on your terminal.
 
 # References
 Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. UCI Machine Learning Repository. Available from: https://doi.org/10.24432/C56S3T.
