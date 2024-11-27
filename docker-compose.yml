@@ -1,7 +1,13 @@
 services:
   wine-color-predictor:
-    image: bchangs821/dsci522-2425-25-heart_disease_predictor:latest 
+    image: farhan64/dsci522-2425-22-wine-chromatic-profile:latest 
     ports:
-      - "8080:8080" 
+      - "8888:8888" 
     volumes:
-      - ./data:/app/data 
+      - "${PWD}:/app/data"
+    working_dir: /app
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+    platform: linux/amd64
