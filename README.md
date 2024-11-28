@@ -51,4 +51,3 @@ where you launched the container.
 
 ## References
 Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. UCI Machine Learning Repository. Available from: https://doi.org/10.24432/C56S3T.
-
