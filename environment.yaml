@@ -19,6 +19,6 @@ dependencies:
   - vegafusion=1.6.9
   - pip:
       - altair_ally>=0.1.1
-      - deepchecks>=0.18
+      - deepchecks==0.18.1
 
 
