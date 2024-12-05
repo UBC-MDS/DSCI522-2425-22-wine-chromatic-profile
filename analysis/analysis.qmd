@@ -1,6 +1,10 @@
 ---
 title: Wine Chromatic Profile Prediction Project
-author: "Adrian Leung, Daria Khon, Farhan Bin Faisal & Zhiwei Zhang"
+author: 
+  - Adrian Leung
+  - Daria Khon
+  - Farhan Bin Faisal
+  - Zhiwei Zhang
 format: 
   html:
     toc: true
@@ -9,10 +13,15 @@ format:
     toc: true
     fig-pos: "H"
 editor: source
+bibliography: references.bib
+jupyter:
+  kernelspec:
+    name: wine
+    language: python
+    display_name: Python (wine)
 ---
 
 ### Group 22
-
 
 ___
 ### INTRODUCTION
@@ -21,7 +30,7 @@ ___
 This project seeks to answer the following question:   
 **"Can we predict the color of wine using its physiochemical properties, such as acidity, sugar content, and alcohol level?"** 
 
-To answer this question, we are using a [data set](https://archive.ics.uci.edu/dataset/186/wine+quality) from the Vinho Verde region in Portugal . These datasets, publicly available through the UCI Machine Learning Repository, include 11 physiochemical attributes for each wine sample—such as fixed acidity, volatile acidity, pH, and alcohol content—along with a sensory-based quality score ranging from 0 to 10. The red wine dataset contains 1,599 samples, while the white wine dataset includes 4,898 samples, enabling a comprehensive analysis across different types of wine.
+To answer this question, we are using a data set [@dua2017uci] from the Vinho Verde region in Portugal . These datasets, publicly available through the UCI Machine Learning Repository, include 11 physiochemical attributes for each wine sample—such as fixed acidity, volatile acidity, pH, and alcohol content—along with a sensory-based quality score ranging from 0 to 10. The red wine dataset contains 1,599 samples, while the white wine dataset includes 4,898 samples, enabling a comprehensive analysis across different types of wine.
 
 The ability to accurately classify wine color using machine learning could offer several advantages. For instance, winemakers and researchers could efficiently analyze large datasets, identify trends, and optimize production processes. Furthermore, consumers or wine retailers might use such tools to assess or verify wine characteristics without requiring advanced laboratory equipment. By developing a robust classification model, we aim to contribute to the wine industry’s growing adoption of data-driven methods, enhancing efficiency and accuracy in identifying and categorizing wines. Ultimately, this approach could lead to scalable, reproducible, and cost-effective methods for wine analysis.
 
@@ -506,7 +515,7 @@ pd.DataFrame([target_dist_result.reduce_output()])
 The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
 
 ----
-The analysis was performed using Python (Van Rossum and Drake, 2009) and the following libraries: requests (Reitz, 2011) for data retrieval, zipfile (Van Rossum and Drake, 2009) for handling compressed files, numpy (Harris et al., 2020) for numerical operations, pandas (McKinney, 2010) for data manipulation, altair (VanderPlas, 2018) for data visualization, and scikit-learn (Pedregosa et al., 2011) for model implementation and evaluation.
+The analysis was performed using Python [@python3reference] and the following libraries: requests [@reitz2011requests] for data retrieval, zipfile [@vanrossum2009python] for handling compressed files, numpy [@harris2020numpy] for numerical operations, pandas [@mckinney2010pandas] for data manipulation, altair [@vanderplas2018altair] for data visualization, and scikit-learn [@pedregosa2011scikit] for model implementation and evaluation.
 
 ___
 ### RESULTS
@@ -546,20 +555,4 @@ With the results being near perfect with the predictions on the test data, this 
 The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.  
 
 ___
-### REFERENCES
-___
-
-Wine Quality [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C56S3T.
-
-Dua, Dheeru, and Casey Graff. 2017. “UCI Machine Learning Repository.” University of California, Irvine, School of Information; Computer Sciences. http://archive.ics.uci.edu/ml.
-
-Harris, C.R. et al., 2020. Array programming with NumPy. Nature, 585, pp.357–362.
-
-Jed Wing, Max Kuhn. Contributions from, Steve Weston, Andre Williams, Chris Keefer, Allan Engelhardt, Tony Cooper, Zachary Mayer, et al. 2019. Caret: Classification and Regression Training. https://CRAN.R-project.org/package=caret.
-
-Reitz, Kenneth. 2011. Requests: HTTP for Humans. https://requests.readthedocs.io/en/master/.
-
-VanderPlas, J. et al., 2018. Altair: Interactive statistical visualizations for python. Journal of open source software, 3(32), p.1057.
-
-Van Rossum, Guido, and Fred L. Drake. 2009. Python 3 Reference Manual. Scotts Valley, CA: CreateSpace.
-
+# REFERENCES
