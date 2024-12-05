@@ -1,0 +1,567 @@
+---
+title: Wine Chromatic Profile Prediction Project
+author: "Tiffany Timbers & Jordan Bourak"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+  pdf:
+    toc: true
+    fig-pos: "H"
+editor: source
+jupyter:
+  kernel: wine
+---
+
+### Group 
+
+
+___
+### INTRODUCTION
+___
+
+This project seeks to answer the following question:   
+**"Can we predict the color of wine using its physiochemical properties, such as acidity, sugar content, and alcohol level?"** 
+
+To answer this question, we are using a [data set](https://archive.ics.uci.edu/dataset/186/wine+quality) from the Vinho Verde region in Portugal . These datasets, publicly available through the UCI Machine Learning Repository, include 11 physiochemical attributes for each wine sample—such as fixed acidity, volatile acidity, pH, and alcohol content—along with a sensory-based quality score ranging from 0 to 10. The red wine dataset contains 1,599 samples, while the white wine dataset includes 4,898 samples, enabling a comprehensive analysis across different types of wine.
+
+The ability to accurately classify wine color using machine learning could offer several advantages. For instance, winemakers and researchers could efficiently analyze large datasets, identify trends, and optimize production processes. Furthermore, consumers or wine retailers might use such tools to assess or verify wine characteristics without requiring advanced laboratory equipment. By developing a robust classification model, we aim to contribute to the wine industry’s growing adoption of data-driven methods, enhancing efficiency and accuracy in identifying and categorizing wines. Ultimately, this approach could lead to scalable, reproducible, and cost-effective methods for wine analysis.
+
+___  
+### METHODS
+___
+
+The code for this analysis and report is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
+
+The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.
+
+```{python}
+import os
+import pandas as pd 
+import numpy as np 
+import pandera as pa
+import altair as alt
+import altair_ally as aly
+from ucimlrepo import fetch_ucirepo 
+from sklearn.model_selection import train_test_split
+```
+
+```{python}
+# loading data 
+wine_quality = fetch_ucirepo(id=186) 
+wine = pd.DataFrame(wine_quality.data.original) 
+wine.to_csv("../data/wine.csv", index=False)
+wine = pd.read_csv("../data/wine.csv")
+```
+
+### Data Validation Checks Before Data Splitting
+
+This section is to perform validation checks on the dataset that preceed the data analysis (especially before data splitting). This is to ensure the quality of the dataset is on par with our expectations and sufficient enough for a robust, high-quality analysis.  
+
+#### 1. Check Data File Format 
+The following checks whether the file exists in `/data` and the format of the data file in `/data` is in the correct `.csv` format.
+
+```{python}
+# input file path
+file_name = 'wine.csv'
+data_path = '../data/'
+path = data_path + file_name
+
+if not os.path.exists(path):
+    raise FileNotFoundError(f"{file_name} does not exist inside the '/data' directory")  
+if not path.endswith('.csv'):
+    raise ValueError('File extension is not in .csv format')
+else:
+    print('Test passed!')
+```
+
+#### 2. Check Correct Column Names
+The following checks whether the column names in the data file match the expected column names and miss any expected columns names.
+
+```{python}
+correct_columns = {
+    'fixed_acidity', 'volatile_acidity', 'citric_acid', 'residual_sugar', 'chlorides', 
+    'free_sulfur_dioxide', 'total_sulfur_dioxide', 'density', 'pH', 'sulphates', 
+    'alcohol', 'quality', 'color'
+}
+
+extracted_columns = set(wine.columns)
+
+if extracted_columns != correct_columns:
+    wrong_columns = extracted_columns.difference(correct_columns)
+    missing_columns = correct_columns.difference(extracted_columns)
+    if (len(wrong_columns) > 0) & (len(missing_columns) > 0):
+        raise ValueError(f"Unexpected column names: {list(wrong_columns)} and missing column names: {list(missing_columns)}")
+    elif len(wrong_columns) > 0:
+        raise ValueError(f"Unexpected column names: {list(wrong_columns)}")
+    elif len(missing_columns) > 0:
+        raise ValueError(f"Missing column names: {list(missing_columns)}")
+else:
+    print('Test passed!')
+```
+
+#### 3. No Empty Observations
+The following checks if there is any empty rows in the dataframe.
+
+```{python}
+schema = pa.DataFrameSchema(
+    checks = [
+        pa.Check(lambda df: ~(df.isna().all(axis=1)).any(), error = "Empty rows found.")
+    ]
+)
+try:
+    schema.validate(wine, lazy=True)
+    print("Test passed!")
+except pa.errors.SchemaErrors as e:
+    print("Test failed:", e)
+```
+
+#### 4. Check Missingness
+The following checks if the number of missingness (i.e. NaN) for each column is higher than a pre-defined threshold, 5% of total observations.
+
+```{python}
+schema = pa.DataFrameSchema(
+    {
+        "fixed_acidity": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'fixed_acidity' column."
+                                           ), nullable=True),
+        "volatile_acidity": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'volatile_acidity' column."
+                                           ), nullable=True), 
+        "citric_acid": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'citric_acid' column."
+                                           ), nullable=True),
+        "residual_sugar": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'residual_sugar' column."
+                                           ), nullable=True),
+        "chlorides": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'chlorides' column."
+                                           ), nullable=True),
+        "free_sulfur_dioxide": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'free_sulfur_dioxide' column."
+                                           ), nullable=True),
+        "total_sulfur_dioxide": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'total_sulfur_dioxide' column."
+                                           ), nullable=True),
+        "density": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'density' column."
+                                           ), nullable=True),
+        "pH": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'pH' column."
+                                           ), nullable=True),
+        "sulphates": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'sulphates' column."
+                                           ), nullable=True),
+        "alcohol": pa.Column(float, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'alcohol' column."
+                                           ), nullable=True),
+        "quality": pa.Column(int, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'quality' column."
+                                           ), nullable=True),
+        "color": pa.Column(str, 
+                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
+                                            element_wise = False, 
+                                            error = "Too many null values in 'color' column."
+                                           ), nullable=True),
+    }
+)
+try:
+    schema.validate(wine, lazy=True)
+    print("Test passed!")
+except pa.errors.SchemaErrors as e:
+    print("Test failed:", e)
+```
+
+#### 5. Check Correct Column Types
+The following check the data types for each column to ensure the data types match our expectations.
+
+```{python}
+schema = pa.DataFrameSchema(
+    {
+        "fixed_acidity": pa.Column(float),
+        "volatile_acidity": pa.Column(float),
+        "citric_acid": pa.Column(float),
+        "residual_sugar": pa.Column(float),
+        "chlorides": pa.Column(float),
+        "free_sulfur_dioxide": pa.Column(float),
+        "total_sulfur_dioxide": pa.Column(float),
+        "density": pa.Column(float),
+        "pH": pa.Column(float),
+        "sulphates": pa.Column(float),
+        "alcohol": pa.Column(float),
+        "quality": pa.Column(int),
+        "color": pa.Column(str), 
+    }
+)
+
+try:
+    schema.validate(wine, lazy=True)
+    print("Test passed!")
+except pa.errors.SchemaErrors as e:
+    print("Test failed:", e)
+    print("Failure Details:")
+    print(e.failure_cases)
+```
+
+#### 5. Check Duplicate Observations
+The following will check if there are duplicate observations in the dataframe.
+
+```{python}
+# Duplicate observation check
+schema = pa.DataFrameSchema(
+    checks=[
+        pa.Check(lambda df: ~df.duplicated().any(), error="Duplicate rows found.") 
+    ]
+)
+
+try:
+    schema.validate(wine, lazy=True)
+    print("Test passed!")
+except pa.errors.SchemaErrors as e:
+    print("Test failed:")
+    failed_result = pd.DataFrame(e.failure_cases)
+    print(failed_result.to_string())
+```
+
+For this test, the result shows that we have duplicate rows. To handle this issue, we will generate further test and disscussion later about these part of data duplication. 
+
+#### 6. Check Outliers or Anomalous Values
+The following will check if there are outliers in the dataframe that are not inside the expected ranges. We have decided the ranges using the explanations below:
+
+`fixed_acidity`: it should be a float between 3.5 and 16. Extreme values outside this range are rare and could indicate measurement errors or outliers.
+
+`volatile_acidity` : a float column between 0.08 and 1.6. Higher values indicate excessive volatile acidity, which could be abnormal for wine quality.
+
+`citric_acid`: a float column between 0 and 1. Citric acid levels rarely exceed 1. A value of 0 is acceptable but beyond 1.0 may suggest data anomalies. 
+
+`residual_sugar`: a float column between 0.5 and 66. While white wines have higher residual sugar, 66 is a reasonable upper limit based on the observed range. Values exceeding this are highly unusual and likely outliers.
+
+`chlorides`: a float column between 0.01 and 0.7. The majority of chloride values are tightly distributed below 0.7.
+
+`free_sulfur_dioxide`: a float column between 0 and 200. Values beyond 200 are rare and not typical in wines. 
+
+`total_sulfur_dioxide`: a float column between 0 and 400. Total sulfur dioxide values above 400 are uncommon and may indicate anomalies in the data or unusual winemaking practices.
+
+`density`: a float column between 0.985 and 1.04. Density for wines typically lies within this range.
+
+`pH`: a float column between 2.5 and 4. Wine pH is generally between 2.5 and 4.0, consistent with its acidic nature. Values outside this range are rare and potentially invalid. 
+
+`sulphates`: a float column between 0.2 and 1.8. Most sulphates fall within this range; higher values indicate unusual conditions. Lower values below 0.2 are atypical and may require closer inspection.
+
+`alcohol`: a float column between 8 and 15. Wine alcohol content is normally within 8% to 15%. Values outside this range suggest non-standard wine or errors in measurement.
+
+`quality`: a float column between 3 and 9. The wine quality score ranges from 3 to 9 based on the dataset. 
+
+```{python}
+# Column types and outliers check
+schema = pa.DataFrameSchema(
+    {
+        "fixed_acidity": pa.Column(float, pa.Check.between(3.5, 16)),
+        "volatile_acidity": pa.Column(float, pa.Check.between(0.08, 1.6)),
+        "citric_acid": pa.Column(float, pa.Check.between(0.0, 1)),
+        "residual_sugar": pa.Column(float, pa.Check.between(0.5, 66)),
+        "chlorides": pa.Column(float, pa.Check.between(0.01, 0.7)),
+        "free_sulfur_dioxide": pa.Column(float, pa.Check.between(0, 200)),
+        "total_sulfur_dioxide": pa.Column(float, pa.Check.between(0, 400)),
+        "density": pa.Column(float, pa.Check.between(0.985, 1.04)),
+        "pH": pa.Column(float, pa.Check.between(2.5, 4.0)),
+        "sulphates": pa.Column(float, pa.Check.between(0.2, 1.8)),
+        "alcohol": pa.Column(float, pa.Check.between(8.0, 15.0)),
+        "quality": pa.Column(int, pa.Check.between(3, 9)),
+        "color": pa.Column(str, pa.Check.isin(["red", "white"]))
+    }
+)
+
+try:
+    schema.validate(wine, lazy = True)
+    print("Test pass!")
+except pa.errors.SchemaErrors as e:
+    print("Test failed:")
+    failed_result = pd.DataFrame(e.failure_cases)
+    print(failed_result.to_string())
+    
+```
+
+Based on the test result, we do have several outliers for feature `citric_acid`, `chlorides`, `free_sulfur_dioxid`, `total_sulfur_dioxide`, `pH`, and `sulphates`. The outliers exhibit minimal deviations from the predefined thresholds and represent only a small fraction of the total dataset. These slight exceedances are unlikely to significantly influence the analysis or model performance. Therefore, we will ignore them in this case.
+
+#### 7. Check Category levels
+The following will check if categorical feature has any string mismatch or singla value. For this data set, there's one categorical feature `color`, which should have levels of "red" and "white".
+
+```{python}
+# Category levels check
+schema = pa.DataFrameSchema(
+    {
+        "color": pa.Column(str, pa.Check.isin(["red", "white"]))
+    }
+)
+
+try:
+    schema.validate(wine, lazy = True)
+    print("Test pass!")
+except pa.errors.SchemaErrors as e:
+    print("Test fail:", e)
+    print("Failure Details:")
+    print(e.failure_cases)
+```
+
+### Exploratory Data Analysis
+
+To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.
+
+```{python}
+wine = wine.drop_duplicates()
+# split data into train and test for EDA 
+train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
+```
+
+```{python}
+print("Feature Datatypes\n")
+print(train_df.info())
+```
+
+```{python}
+print("Summary Statistics\n")
+train_df.describe()
+```
+
+```{python}
+aly.alt.data_transformers.enable('vegafusion')
+
+print("Figure 1: Distribution of Features per Target Class")
+aly.dist(train_df, color = "color")
+```
+
+```{python}
+print("Figure 2: Correlation between Wine Color PRediction Features\n")
+aly.corr(train_df)
+```
+
+The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. <br>
+#### We will next check, feature-feature correlations and feature-target correlations to check for any anomalous correlations and prevent multicolinearity and overfitting in our model.
+If any anomalous correlations are found, the script will throw and error and we will examine the features in question and determine whether the best plan of action would be dropping the feature or not.
+
+```{python}
+# imports for correlation anomality validations
+from deepchecks.tabular import Dataset
+from deepchecks.tabular.checks import FeatureLabelCorrelation, FeatureFeatureCorrelation, PredictionDrift
+
+wine_train_ds = Dataset(train_df, label="color", cat_features=[])
+wine_test_ds = Dataset(test_df, label="color", cat_features=[])
+
+check_feat_lab_corr = FeatureLabelCorrelation().add_condition_feature_pps_less_than(0.8)
+check_feat_lab_corr_result = check_feat_lab_corr.run(dataset=wine_train_ds)
+
+if not check_feat_lab_corr_result.passed_conditions():
+    raise ValueError("Feature-Label correlation exceeds the maximum acceptable threshold.")
+
+check_feat_feat_corr = FeatureFeatureCorrelation().add_condition_max_number_of_pairs_above_threshold(threshold = 0.8, n_pairs = 0)
+check_feat_feat_corr_result = check_feat_feat_corr.run(dataset=wine_train_ds)
+
+if not check_feat_feat_corr_result.passed_conditions():
+    raise ValueError("Feature-feature correlation exceeds the maximum acceptable threshold.")
+```
+
+
+```{python}
+# imports for modelling
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import (
+    ConfusionMatrixDisplay, PrecisionRecallDisplay, 
+    make_scorer, recall_score, precision_score, f1_score
+)
+from sklearn.compose import make_column_transformer
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder
+from sklearn.model_selection import (
+    cross_validate,
+    RandomizedSearchCV,
+)
+from scipy.stats import loguniform
+```
+
+```{python}
+# train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
+train_df.head()
+```
+
+```{python}
+X_train = train_df.drop(columns=["color"])
+X_test = test_df.drop(columns=["color"])
+y_train = train_df["color"]
+y_test = test_df["color"]
+```
+
+```{python}
+# Transformations for different scales of the features
+categorical_features = ["color"]
+ordinal_features = ["quality"]
+numerical_features = [col for col in wine.columns if col != "color" and col != "quality"]
+
+preprocessor = make_column_transformer(
+    (OrdinalEncoder(dtype=int), ordinal_features),
+    (StandardScaler(), numerical_features),
+    remainder='passthrough' 
+)
+```
+
+```{python}
+pipe = make_pipeline(
+    preprocessor, 
+    LogisticRegression(random_state=123, max_iter=1000, class_weight="balanced"),
+)
+pipe.fit(X_train, y_train)
+```
+
+```{python}
+scoring = {
+    "accuracy": 'accuracy',
+    'precision': make_scorer(precision_score, pos_label = 'red'),
+    'recall': make_scorer(recall_score, pos_label = 'red'),
+    'f1': make_scorer(f1_score, pos_label = 'red')
+}
+
+# Running cross validation on default model
+pd.DataFrame(
+    cross_validate(pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
+).agg(['mean', 'std']).round(3).T
+```
+
+```{python}
+# Hyperparameter optimization
+param_grid = {
+    "logisticregression__C": loguniform(1e-1, 10)
+}
+
+random_search = RandomizedSearchCV(
+    pipe,
+    param_grid,
+    n_iter = 10,
+    verbose = 1,
+    n_jobs = -1,
+    random_state = 123,
+    return_train_score = True, 
+    scoring = make_scorer(f1_score, pos_label = 'red')
+)
+random_search.fit(X_train, y_train)
+```
+
+```{python}
+pd.DataFrame(random_search.cv_results_)[
+    [
+        "mean_train_score",
+        "mean_test_score",
+        "param_logisticregression__C",
+        "mean_fit_time",
+        "rank_test_score"
+    ]
+].set_index("rank_test_score").sort_index().T
+```
+
+```{python}
+pd.DataFrame([random_search.best_params_])
+```
+
+#### To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model's predictions are consistent across these datasets or if there is a significant drift.
+
+```{python}
+target_drift_check = PredictionDrift()
+
+expected_distribution = {"red": 0.25, "white": 0.75} 
+actual_distribution = train_df['color'].value_counts(normalize=True).to_dict()
+
+for cat, prob in expected_distribution.items():
+    if abs(actual_distribution.get(cat) - prob) > 0.1:
+        print(f"Class '{cat}' deviates significantly from the expected distribution {prob}.")
+
+target_dist_result = target_drift_check.run(
+    wine_train_ds, 
+    wine_test_ds, 
+    model= random_search.best_estimator_
+)
+pd.DataFrame([target_dist_result.reduce_output()])
+```
+
+The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
+
+----
+The analysis was performed using Python (Van Rossum and Drake, 2009) and the following libraries: requests (Reitz, 2011) for data retrieval, zipfile (Van Rossum and Drake, 2009) for handling compressed files, numpy (Harris et al., 2020) for numerical operations, pandas (McKinney, 2010) for data manipulation, altair (VanderPlas, 2018) for data visualization, and scikit-learn (Pedregosa et al., 2011) for model implementation and evaluation.
+
+___
+### RESULTS
+___
+
+```{python}
+print("Accuracy score on test data", random_search.score(X_test, y_test))
+
+# print confusion matrix
+ConfusionMatrixDisplay.from_estimator(
+    random_search,
+    X_test,
+    y_test,
+    values_format="d"
+);
+```
+
+```{python}
+PrecisionRecallDisplay.from_estimator(
+    random_search,
+    X_test,
+    y_test,
+    pos_label="red",
+    name='wine_quality', 
+)
+```
+
+___
+### DISCUSSION
+___
+From the results above, we see that the logistic regression with balanced class weight performs very well in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (>0.994), we decide to do a further randomized search cross-validation using the F1 score to find an optimized hyperparameter C that can minimize our classification bias.  
+
+Using the optimized model on the test data, we see that the model has a high accuracy score as well (0.985). Moreover, from the confusion matrix, we see that there are very few false positives (false red) and false negatives (false white) compared to the true ones. This implies that the recall and precision scores are near 1 on the test data. This is further supported by the precision-recall curve as the average precision is 0.99 and the precision score maintains constantly very close to 1 when adjusting the threshold in the model.  
+
+With the results being near perfect with the predictions on the test data, this is out of our expectations as we would expect there will be a more flawed prediction that will not perform as great in both recall and precision in general (especially not when both recall and precision are higher than 0.98). 
+
+The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.  
+
+___
+### REFERENCES
+___
+
+Wine Quality [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C56S3T.
+
+Dua, Dheeru, and Casey Graff. 2017. “UCI Machine Learning Repository.” University of California, Irvine, School of Information; Computer Sciences. http://archive.ics.uci.edu/ml.
+
+Harris, C.R. et al., 2020. Array programming with NumPy. Nature, 585, pp.357–362.
+
+Jed Wing, Max Kuhn. Contributions from, Steve Weston, Andre Williams, Chris Keefer, Allan Engelhardt, Tony Cooper, Zachary Mayer, et al. 2019. Caret: Classification and Regression Training. https://CRAN.R-project.org/package=caret.
+
+Reitz, Kenneth. 2011. Requests: HTTP for Humans. https://requests.readthedocs.io/en/master/.
+
+VanderPlas, J. et al., 2018. Altair: Interactive statistical visualizations for python. Journal of open source software, 3(32), p.1057.
+
+Van Rossum, Guido, and Fred L. Drake. 2009. Python 3 Reference Manual. Scotts Valley, CA: CreateSpace.
+

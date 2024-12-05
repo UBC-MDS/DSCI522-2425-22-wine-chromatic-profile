@@ -17,6 +17,7 @@ dependencies:
   - ucimlrepo=0.0.7
   - vega_datasets=0.9.0
   - vegafusion=1.6.9
+  - quarto=1.5.57
   - pip:
       - altair_ally>=0.1.1
       - deepchecks==0.18.1
