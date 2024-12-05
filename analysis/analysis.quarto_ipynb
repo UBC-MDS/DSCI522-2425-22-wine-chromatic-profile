@@ -40,7 +40,7 @@
         "\n",
         "The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.\n"
       ],
-      "id": "0569dc6d"
+      "id": "0aa72217"
     },
     {
       "cell_type": "code",
@@ -55,7 +55,7 @@
         "from ucimlrepo import fetch_ucirepo \n",
         "from sklearn.model_selection import train_test_split"
       ],
-      "id": "9101c7ed",
+      "id": "ffc14b6f",
       "execution_count": null,
       "outputs": []
     },
@@ -69,7 +69,7 @@
         "wine.to_csv(\"../data/wine.csv\", index=False)\n",
         "wine = pd.read_csv(\"../data/wine.csv\")"
       ],
-      "id": "13b5fad8",
+      "id": "f0c5616a",
       "execution_count": null,
       "outputs": []
     },
@@ -84,7 +84,7 @@
         "#### 1. Check Data File Format \n",
         "The following checks whether the file exists in `/data` and the format of the data file in `/data` is in the correct `.csv` format.\n"
       ],
-      "id": "e0dbd907"
+      "id": "6ab12626"
     },
     {
       "cell_type": "code",
@@ -102,7 +102,7 @@
         "else:\n",
         "    print('Test passed!')"
       ],
-      "id": "032c0d38",
+      "id": "15c40cc4",
       "execution_count": null,
       "outputs": []
     },
@@ -113,7 +113,7 @@
         "#### 2. Check Correct Column Names\n",
         "The following checks whether the column names in the data file match the expected column names and miss any expected columns names.\n"
       ],
-      "id": "25a92c7d"
+      "id": "1a4a2fdc"
     },
     {
       "cell_type": "code",
@@ -139,7 +139,7 @@
         "else:\n",
         "    print('Test passed!')"
       ],
-      "id": "9c1908fc",
+      "id": "4cebd976",
       "execution_count": null,
       "outputs": []
     },
@@ -150,7 +150,7 @@
         "#### 3. No Empty Observations\n",
         "The following checks if there is any empty rows in the dataframe.\n"
       ],
-      "id": "6387cf62"
+      "id": "8689bec0"
     },
     {
       "cell_type": "code",
@@ -167,7 +167,7 @@
         "except pa.errors.SchemaErrors as e:\n",
         "    print(\"Test failed:\", e)"
       ],
-      "id": "24130874",
+      "id": "fe152145",
       "execution_count": null,
       "outputs": []
     },
@@ -178,7 +178,7 @@
         "#### 4. Check Missingness\n",
         "The following checks if the number of missingness (i.e. NaN) for each column is higher than a pre-defined threshold, 5% of total observations.\n"
       ],
-      "id": "95e29615"
+      "id": "2587d0a1"
     },
     {
       "cell_type": "code",
@@ -259,7 +259,7 @@
         "except pa.errors.SchemaErrors as e:\n",
         "    print(\"Test failed:\", e)"
       ],
-      "id": "f530f040",
+      "id": "13aa8d60",
       "execution_count": null,
       "outputs": []
     },
@@ -270,7 +270,7 @@
         "#### 5. Check Correct Column Types\n",
         "The following check the data types for each column to ensure the data types match our expectations.\n"
       ],
-      "id": "0a44ef9e"
+      "id": "d23d3088"
     },
     {
       "cell_type": "code",
@@ -302,7 +302,7 @@
         "    print(\"Failure Details:\")\n",
         "    print(e.failure_cases)"
       ],
-      "id": "af0b8099",
+      "id": "372c1233",
       "execution_count": null,
       "outputs": []
     },
@@ -313,7 +313,7 @@
         "#### 5. Check Duplicate Observations\n",
         "The following will check if there are duplicate observations in the dataframe.\n"
       ],
-      "id": "0c76366a"
+      "id": "f6cb4a66"
     },
     {
       "cell_type": "code",
@@ -334,7 +334,7 @@
         "    failed_result = pd.DataFrame(e.failure_cases)\n",
         "    print(failed_result.to_string())"
       ],
-      "id": "317c90f2",
+      "id": "0ea0f2bc",
       "execution_count": null,
       "outputs": []
     },
@@ -371,7 +371,7 @@
         "\n",
         "`quality`: a float column between 3 and 9. The wine quality score ranges from 3 to 9 based on the dataset. \n"
       ],
-      "id": "e2426fdf"
+      "id": "b4400553"
     },
     {
       "cell_type": "code",
@@ -404,7 +404,7 @@
         "    failed_result = pd.DataFrame(e.failure_cases)\n",
         "    print(failed_result.to_string())\n"
       ],
-      "id": "25338ff5",
+      "id": "fbbc3a26",
       "execution_count": null,
       "outputs": []
     },
@@ -417,7 +417,7 @@
         "#### 7. Check Category levels\n",
         "The following will check if categorical feature has any string mismatch or singla value. For this data set, there's one categorical feature `color`, which should have levels of \"red\" and \"white\".\n"
       ],
-      "id": "0c543d36"
+      "id": "73bf069d"
     },
     {
       "cell_type": "code",
@@ -438,7 +438,7 @@
         "    print(\"Failure Details:\")\n",
         "    print(e.failure_cases)"
       ],
-      "id": "0cd4eff9",
+      "id": "52e776a6",
       "execution_count": null,
       "outputs": []
     },
@@ -450,7 +450,7 @@
         "\n",
         "To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.\n"
       ],
-      "id": "03f9e4a2"
+      "id": "03662e39"
     },
     {
       "cell_type": "code",
@@ -460,7 +460,7 @@
         "# split data into train and test for EDA \n",
         "train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)"
       ],
-      "id": "427d05a1",
+      "id": "211d846b",
       "execution_count": null,
       "outputs": []
     },
@@ -471,7 +471,7 @@
         "print(\"Feature Datatypes\\n\")\n",
         "print(train_df.info())"
       ],
-      "id": "9e2e87d0",
+      "id": "35468b6f",
       "execution_count": null,
       "outputs": []
     },
@@ -482,7 +482,7 @@
         "print(\"Summary Statistics\\n\")\n",
         "train_df.describe()"
       ],
-      "id": "ceb87ba3",
+      "id": "6ff3dbdd",
       "execution_count": null,
       "outputs": []
     },
@@ -495,7 +495,7 @@
         "print(\"Figure 1: Distribution of Features per Target Class\")\n",
         "aly.dist(train_df, color = \"color\")"
       ],
-      "id": "0f745d95",
+      "id": "45d6e28c",
       "execution_count": null,
       "outputs": []
     },
@@ -506,7 +506,7 @@
         "print(\"Figure 2: Correlation between Wine Color PRediction Features\\n\")\n",
         "aly.corr(train_df)"
       ],
-      "id": "c0118614",
+      "id": "a5878ffa",
       "execution_count": null,
       "outputs": []
     },
@@ -518,7 +518,7 @@
         "#### We will next check, feature-feature correlations and feature-target correlations to check for any anomalous correlations and prevent multicolinearity and overfitting in our model.\n",
         "If any anomalous correlations are found, the script will throw and error and we will examine the features in question and determine whether the best plan of action would be dropping the feature or not.\n"
       ],
-      "id": "795401f6"
+      "id": "f5da1aae"
     },
     {
       "cell_type": "code",
@@ -543,7 +543,7 @@
         "if not check_feat_feat_corr_result.passed_conditions():\n",
         "    raise ValueError(\"Feature-feature correlation exceeds the maximum acceptable threshold.\")"
       ],
-      "id": "5d7f58d1",
+      "id": "926e33bc",
       "execution_count": null,
       "outputs": []
     },
@@ -566,7 +566,7 @@
         ")\n",
         "from scipy.stats import loguniform"
       ],
-      "id": "82d364ed",
+      "id": "d3c91697",
       "execution_count": null,
       "outputs": []
     },
@@ -577,7 +577,7 @@
         "# train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)\n",
         "train_df.head()"
       ],
-      "id": "797eca3b",
+      "id": "22a97eb5",
       "execution_count": null,
       "outputs": []
     },
@@ -590,7 +590,7 @@
         "y_train = train_df[\"color\"]\n",
         "y_test = test_df[\"color\"]"
       ],
-      "id": "4c15a9c6",
+      "id": "590d3280",
       "execution_count": null,
       "outputs": []
     },
@@ -609,7 +609,7 @@
         "    remainder='passthrough' \n",
         ")"
       ],
-      "id": "d9ba87f7",
+      "id": "6ff20497",
       "execution_count": null,
       "outputs": []
     },
@@ -623,7 +623,7 @@
         ")\n",
         "pipe.fit(X_train, y_train)"
       ],
-      "id": "4767f048",
+      "id": "be0bb181",
       "execution_count": null,
       "outputs": []
     },
@@ -643,7 +643,7 @@
         "    cross_validate(pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)\n",
         ").agg(['mean', 'std']).round(3).T"
       ],
-      "id": "1042ad3f",
+      "id": "fbdaf6d3",
       "execution_count": null,
       "outputs": []
     },
@@ -668,7 +668,7 @@
         ")\n",
         "random_search.fit(X_train, y_train)"
       ],
-      "id": "0777d045",
+      "id": "14efb295",
       "execution_count": null,
       "outputs": []
     },
@@ -686,7 +686,7 @@
         "    ]\n",
         "].set_index(\"rank_test_score\").sort_index().T"
       ],
-      "id": "97d5c8f1",
+      "id": "7d0d9bc6",
       "execution_count": null,
       "outputs": []
     },
@@ -696,7 +696,7 @@
       "source": [
         "pd.DataFrame([random_search.best_params_])"
       ],
-      "id": "5b92ac87",
+      "id": "a83aa505",
       "execution_count": null,
       "outputs": []
     },
@@ -706,7 +706,7 @@
       "source": [
         "#### To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model's predictions are consistent across these datasets or if there is a significant drift.\n"
       ],
-      "id": "e8735271"
+      "id": "14cb3571"
     },
     {
       "cell_type": "code",
@@ -728,7 +728,7 @@
         ")\n",
         "pd.DataFrame([target_dist_result.reduce_output()])"
       ],
-      "id": "57feaef9",
+      "id": "5d0d5c46",
       "execution_count": null,
       "outputs": []
     },
@@ -745,7 +745,7 @@
         "### RESULTS\n",
         "___\n"
       ],
-      "id": "7e7134f9"
+      "id": "367ca008"
     },
     {
       "cell_type": "code",
@@ -761,7 +761,7 @@
         "    values_format=\"d\"\n",
         ");"
       ],
-      "id": "7d6b60ed",
+      "id": "cc9a5f18",
       "execution_count": null,
       "outputs": []
     },
@@ -777,7 +777,7 @@
         "    name='wine_quality', \n",
         ")"
       ],
-      "id": "a9663140",
+      "id": "d69625df",
       "execution_count": null,
       "outputs": []
     },
@@ -814,7 +814,7 @@
         "\n",
         "Van Rossum, Guido, and Fred L. Drake. 2009. Python 3 Reference Manual. Scotts Valley, CA: CreateSpace.\n"
       ],
-      "id": "788d0b0b"
+      "id": "afa25e8a"
     }
   ],
   "metadata": {

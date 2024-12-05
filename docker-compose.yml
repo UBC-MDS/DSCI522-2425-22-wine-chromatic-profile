@@ -9,5 +9,5 @@ services:
     deploy:
       resources:
         limits:
-          memory: 8G
+          memory: 10G
     platform: linux/amd64
