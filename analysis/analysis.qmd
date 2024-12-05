@@ -1,6 +1,6 @@
 ---
 title: Wine Chromatic Profile Prediction Project
-author: "Tiffany Timbers & Jordan Bourak"
+author: "Adrian Leung, Daria Khon, Farhan Bin Faisal & Zhiwei Zhang"
 format: 
   html:
     toc: true
@@ -9,11 +9,9 @@ format:
     toc: true
     fig-pos: "H"
 editor: source
-jupyter:
-  kernel: wine
 ---
 
-### Group 
+### Group 22
 
 
 ___
