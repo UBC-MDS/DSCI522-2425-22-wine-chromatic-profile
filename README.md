@@ -70,3 +70,17 @@ python download.py --id 186 --save_to ../data/wine_ex.csv
 
 STEP 2
 python clean_data.py --raw-data ../data/wine.csv
+
+
+
+python download.py --id 186 --save_to data/wine_ex.csv
+
+python clean_data.py --raw-data ../data/wine_ex.csv
+
+python preprocessing.py --pipe-to ../results/models
+
+python model_evaluation_wine_predictor.py --train-data ../data/wine_train.csv \
+--test-data ../data/wine_test.csv \
+--pipeline-path ../results/models/wine_pipeline.pickle \
+--table-to ../results/table \
+--plot-to ../results/figures

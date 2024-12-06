@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn import set_config
-from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import (
     ConfusionMatrixDisplay, PrecisionRecallDisplay, 
@@ -87,6 +86,8 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     ].set_index("rank_test_score").sort_index().T
     random_search_df.to_csv(os.path.join(table_to, "random_search.csv"))
 
+    pickle.dump(random_search, open("../results/models/wine_random_search.pickle", "wb"))
+
     # Results
     # Compute accuracy on test data
     accuracy = random_search.score(
@@ -109,6 +110,7 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         y_test,
         values_format="d"
     )
+
     if not os.path.exists(plot_to):
         os.mkdir(plot_to)
     confusion_matrix.figure_.savefig(os.path.join(plot_to, "confusion_matrix.png"))

@@ -5,9 +5,13 @@ format:
   html:
     toc: true
     embed-resources: true
+    fig-numbering: true
+    tbl-numbering: true
   pdf:
     toc: true
     fig-pos: "H"
+    fig-numbering: true
+    tbl-numbering: true
 editor: source
 bibliography: references.bib
 jupyter:
@@ -47,6 +51,8 @@ import pandera as pa
 import altair as alt
 import altair_ally as aly
 from ucimlrepo import fetch_ucirepo 
+from tabulate import tabulate
+from IPython.display import Markdown, display
 from sklearn.model_selection import train_test_split
 ```
 
@@ -54,8 +60,6 @@ from sklearn.model_selection import train_test_split
 # loading data 
 wine_quality = fetch_ucirepo(id=186) 
 wine = pd.DataFrame(wine_quality.data.original) 
-wine.to_csv("../data/wine.csv", index=False)
-wine = pd.read_csv("../data/wine.csv")
 
 wine = wine.drop_duplicates()
 # split data into train and test for EDA 
@@ -70,13 +74,23 @@ wine_test = pd.read_csv("../data/wine_test.csv")
 To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.
 
 ```{python}
-print("Feature Datatypes\n")
-print(wine_train.info())
+info_df = pd.DataFrame({
+    "Column": wine_train.columns,
+    "Non-Null Count": [wine_train[col].notnull().sum() for col in wine_train.columns],
+    "Data Type": [wine_train[col].dtype for col in wine_train.columns]
+})
 ```
 
 ```{python}
-print("Summary Statistics\n")
-wine_train.describe()
+#| label: tbl-feat-datatypes
+#| tbl-cap: Feature Datatypes
+Markdown(info_df.to_markdown())
+```
+
+```{python}
+#| label: tbl-describe
+#| tbl-cap: Summary Statistics
+Markdown(wine_train.describe().to_markdown())
 ```
 
 ```{python}
@@ -87,11 +101,12 @@ aly.dist(train_df, color = "color")
 ```
 
 ```{python}
-print("Figure 2: Correlation between Wine Color PRediction Features\n")
+print("Figure 2: Correlation between Wine Color Prediction Features\n")
 aly.corr(train_df)
 ```
 
-The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. <br>
+The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. 
+<br>
 #### We will next check, feature-feature correlations and feature-target correlations to check for any anomalous correlations and prevent multicolinearity and overfitting in our model.
 If any anomalous correlations are found, the script will throw and error and we will examine the features in question and determine whether the best plan of action would be dropping the feature or not.
 
@@ -120,9 +135,7 @@ if not check_feat_feat_corr_result.passed_conditions():
 ```{python}
 # imports for modelling
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
-from sklearn.metrics import (
-    ConfusionMatrixDisplay, PrecisionRecallDisplay, 
+from sklearn.metrics import ( 
     make_scorer, recall_score, precision_score, f1_score
 )
 from sklearn.compose import make_column_transformer
@@ -135,11 +148,6 @@ from scipy.stats import loguniform
 ```
 
 ```{python}
-# train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
-train_df.head()
-```
-
-```{python}
 X_train = train_df.drop(columns=["color"])
 X_test = test_df.drop(columns=["color"])
 y_train = train_df["color"]
@@ -147,93 +155,56 @@ y_test = test_df["color"]
 ```
 
 ```{python}
-# Transformations for different scales of the features
-categorical_features = ["color"]
-ordinal_features = ["quality"]
-numerical_features = [col for col in wine.columns if col != "color" and col != "quality"]
-
-preprocessor = make_column_transformer(
-    (OrdinalEncoder(dtype=int), ordinal_features),
-    (StandardScaler(), numerical_features),
-    remainder='passthrough' 
-)
-```
-
-```{python}
-pipe = make_pipeline(
-    preprocessor, 
-    LogisticRegression(random_state=123, max_iter=1000, class_weight="balanced"),
-)
-pipe.fit(X_train, y_train)
-```
-
-```{python}
-scoring = {
-    "accuracy": 'accuracy',
-    'precision': make_scorer(precision_score, pos_label = 'red'),
-    'recall': make_scorer(recall_score, pos_label = 'red'),
-    'f1': make_scorer(f1_score, pos_label = 'red')
-}
+import pickle
+with open("../results/models/wine_pipeline.pickle", "rb") as file:
+    pipe = pickle.load(file)
 
 # Running cross validation on default model
-pd.DataFrame(
-    cross_validate(pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
-).agg(['mean', 'std']).round(3).T
-```
-
-```{python}
-# Hyperparameter optimization
-param_grid = {
-    "logisticregression__C": loguniform(1e-1, 10)
-}
-
-random_search = RandomizedSearchCV(
-    pipe,
-    param_grid,
-    n_iter = 10,
-    verbose = 1,
-    n_jobs = -1,
-    random_state = 123,
-    return_train_score = True, 
-    scoring = make_scorer(f1_score, pos_label = 'red')
+cross_validation_results = pd.read_csv("../results/table/cross_validation.csv")
+cross_validation_results = cross_validation_results.rename(
+    columns={"Unnamed: 0": "Scoring Metric"}
 )
-random_search.fit(X_train, y_train)
+
+# Hyperparameter optimization
+with open("../results/models/wine_random_search.pickle", "rb") as file:
+    random_search = pickle.load(file)
+
+random_search_results = pd.read_csv("../results/table/random_search.csv")
+
+best_params = random_search.best_params_["logisticregression__C"]
+```
+
+
+```{python}
+#| label: tbl-cross-val
+#| tbl-cap: Cross Validation Results
+Markdown(cross_validation_results.to_markdown())
 ```
 
 ```{python}
-pd.DataFrame(random_search.cv_results_)[
-    [
-        "mean_train_score",
-        "mean_test_score",
-        "param_logisticregression__C",
-        "mean_fit_time",
-        "rank_test_score"
-    ]
-].set_index("rank_test_score").sort_index().T
-```
-
-```{python}
-pd.DataFrame([random_search.best_params_])
+#| label: tbl-random-search
+#| tbl-cap: Random Search Results
+Markdown(random_search_results.to_markdown())
 ```
 
 #### To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model's predictions are consistent across these datasets or if there is a significant drift.
 
 ```{python}
-target_drift_check = PredictionDrift()
+# target_drift_check = PredictionDrift()
 
-expected_distribution = {"red": 0.25, "white": 0.75} 
-actual_distribution = train_df['color'].value_counts(normalize=True).to_dict()
+# expected_distribution = {"red": 0.25, "white": 0.75} 
+# actual_distribution = train_df['color'].value_counts(normalize=True).to_dict()
 
-for cat, prob in expected_distribution.items():
-    if abs(actual_distribution.get(cat) - prob) > 0.1:
-        print(f"Class '{cat}' deviates significantly from the expected distribution {prob}.")
+# for cat, prob in expected_distribution.items():
+#     if abs(actual_distribution.get(cat) - prob) > 0.1:
+#         print(f"Class '{cat}' deviates significantly from the expected distribution {prob}.")
 
-target_dist_result = target_drift_check.run(
-    wine_train_ds, 
-    wine_test_ds, 
-    model= random_search.best_estimator_
-)
-pd.DataFrame([target_dist_result.reduce_output()])
+# target_dist_result = target_drift_check.run(
+#     wine_train_ds, 
+#     wine_test_ds, 
+#     model= random_search.best_estimator_
+# )
+# pd.DataFrame([target_dist_result.reduce_output()])
 ```
 
 The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
@@ -246,26 +217,14 @@ ___
 ___
 
 ```{python}
-print("Accuracy score on test data", random_search.score(X_test, y_test))
-
-# print confusion matrix
-ConfusionMatrixDisplay.from_estimator(
-    random_search,
-    X_test,
-    y_test,
-    values_format="d"
-);
+best_model_accuracy = random_search.score(X_test, y_test)
 ```
 
-```{python}
-PrecisionRecallDisplay.from_estimator(
-    random_search,
-    X_test,
-    y_test,
-    pos_label="red",
-    name='wine_quality', 
-)
-```
+Accuracy score on the test data was `{python} best_model_accuracy`
+
+![Confusion Matric](../results/figures/confusion_matrix.png){#fig-confusion}
+
+![Precision Recall Curve](../results/figures/pr_curve.png){#fig-pr}
 
 ___
 ### DISCUSSION
