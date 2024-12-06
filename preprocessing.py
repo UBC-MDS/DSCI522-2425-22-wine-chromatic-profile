@@ -19,7 +19,7 @@ from sklearn.pipeline import make_pipeline
 @click.option('--pipe-to', type=str, help="Path to directory where the pipeline object will be written to")
 @click.option('--seed', type=int, help="Random seed", default=123)
 
-def main(raw_data, data_to, preprocessor_to, seed):
+def main(raw_data, pipe_to, seed):
     '''This script makes the preprocessor and model pipeline'''
     np.random.seed(seed)
     set_config(transform_output="pandas")
