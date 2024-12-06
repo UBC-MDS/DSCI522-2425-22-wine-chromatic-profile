@@ -1,5 +1,5 @@
 # validation_before_split.py
-# author: Zhiwei Zhang
+# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
 import os
