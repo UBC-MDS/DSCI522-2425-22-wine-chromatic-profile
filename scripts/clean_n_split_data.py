@@ -1,4 +1,4 @@
-# clean data
+# clean and split data into train and test
 # Authors: Daria Khon, Farhan Bin Faisel, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
