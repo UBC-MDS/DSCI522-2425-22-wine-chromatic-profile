@@ -1,6 +1,6 @@
-# split_n_preprocess.py
-# author: Tiffany Timbers
-# date: 2023-11-27
+# preprocessing.py
+# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
+# date: 2024-12-05
 
 import click
 import os
@@ -15,19 +15,19 @@ from sklearn.pipeline import make_pipeline
 
 
 @click.command()
-@click.option('--raw-data', type=str, help="Path to raw data")
 @click.option('--pipe-to', type=str, help="Path to directory where the pipeline object will be written to")
 @click.option('--seed', type=int, help="Random seed", default=123)
 
-def main(raw_data, pipe_to, seed):
+def main(pipe_to, seed):
     '''This script makes the preprocessor and model pipeline'''
     np.random.seed(seed)
     set_config(transform_output="pandas")
 
-    wine = pd.read_csv(raw_data)
-
     ordinal_features = ["quality"]
-    numerical_features = [col for col in wine.columns if col != "color" and col != "quality"]
+    numerical_features = [
+        'fixed_acidity', 'volatile_acidity', 'citric_acid', 'residual_sugar', 'chlorides', 
+        'free_sulfur_dioxide', 'total_sulfur_dioxide', 'density', 'pH', 'sulphates', 'alcohol'
+    ]
 
     preprocessor = make_column_transformer(
         (OrdinalEncoder(dtype=int), ordinal_features),
@@ -40,7 +40,9 @@ def main(raw_data, pipe_to, seed):
     )
     
     # save pipeline
-    pickle.dump(wine_pipe, open(os.path.join(pipe_to, "wine_pipeline.pickle"), "wb"))
+    pipe_path = os.path.join(pipe_to, "wine_pipeline.pickle")
+    os.makedirs(os.path.dirname(pipe_path), exist_ok=True)
+    pickle.dump(wine_pipe, open(pipe_path, "wb"))
 
 if __name__ == '__main__':
     main()

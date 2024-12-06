@@ -1,5 +1,5 @@
 # model_evaluation_wine_predictor.py
-# author: Adrian Leung
+# author: Daria Khon, Farhan Bin Faisel, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
 import click
@@ -28,7 +28,7 @@ from scipy.stats import loguniform
 @click.option('--plot-to', type=str, help="Path to directory where the plots will be written to")
 @click.option('--seed', type=int, help="Random seed", default=123)
 
-def main(train_data, test_data, pipeline_from, table_to, plot_to, seed):
+def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     '''Optimize the wine chromatic profile classifier
     and evaluates the wine chromatic profile classifier on the test data 
     and saves the optimization and evaluation results.'''
@@ -38,7 +38,7 @@ def main(train_data, test_data, pipeline_from, table_to, plot_to, seed):
     # Read in data & wine_pipe (pipeline object)
     wine_train = pd.read_csv(train_data)
     wine_test = pd.read_csv(test_data)
-    with open(pipeline_from, 'rb') as f:
+    with open(pipeline_path, 'rb') as f:
         wine_pipe = pickle.load(f)
 
     # Split train and test data into X and y
@@ -57,6 +57,8 @@ def main(train_data, test_data, pipeline_from, table_to, plot_to, seed):
     cv_df = pd.DataFrame(
         cross_validate(wine_pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
     ).agg(['mean', 'std']).round(3).T
+    if not os.path.exists(table_to):
+        os.mkdir(table_to)
     cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"))
 
     # Hyperparameter Optimization with RandomizedSearchCV via F1 scoring
@@ -107,6 +109,8 @@ def main(train_data, test_data, pipeline_from, table_to, plot_to, seed):
         y_test,
         values_format="d"
     )
+    if not os.path.exists(plot_to):
+        os.mkdir(plot_to)
     confusion_matrix.figure_.savefig(os.path.join(plot_to, "confusion_matrix.png"))
 
     # Precision-recall Curve
