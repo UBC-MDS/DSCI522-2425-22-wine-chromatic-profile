@@ -65,14 +65,6 @@ Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. 
 
 
 
-STEP 1
-python download.py --id 186 --save_to ../data/wine_ex.csv
-
-STEP 2
-python clean_data.py --raw-data ../data/wine.csv
-
-
-
 python download.py --id 186 --save_to data/wine_ex.csv
 
 python clean_data.py --raw-data ../data/wine_ex.csv
@@ -84,3 +76,10 @@ python model_evaluation_wine_predictor.py --train-data ../data/wine_train.csv \
 --pipeline-path ../results/models/wine_pipeline.pickle \
 --table-to ../results/table \
 --plot-to ../results/figures
+
+
+For the data validation script:
+python validation_before_split.py --file_name wine.csv --data_path ../data/
+
+For the eda script:
+python eda_n_correlation_check.py --train-file ../data/wine_train.csv --test-file ../data/wine_test.csv --output-dir ../results/figures
