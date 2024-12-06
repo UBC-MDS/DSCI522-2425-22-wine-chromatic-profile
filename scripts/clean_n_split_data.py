@@ -35,7 +35,7 @@ def main(raw_data):
     ]
 
     # clean data
-    wine = pd.read_csv(raw_data, names=colnames, header=None).drop_duplicates()
+    wine = pd.read_csv(raw_data).drop_duplicates()
     
     # create the split
     train_df, test_df = train_test_split(
@@ -43,8 +43,8 @@ def main(raw_data):
     )
     path = Path(__file__).parent
  
-    train_df.to_csv(path/ "../data/wine_train.csv")
-    test_df.to_csv(path/ "../data/wine_test.csv")
+    train_df.to_csv(path/ "../data/wine_train.csv", index = False)
+    test_df.to_csv(path/ "../data/wine_test.csv", index = False)
     
 if __name__ == '__main__':
     main()
