@@ -63,3 +63,10 @@ where you launched the container, and then type `docker compose rm`
 # References
 Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. UCI Machine Learning Repository. Available from: https://doi.org/10.24432/C56S3T.
 
+
+
+STEP 1
+python download.py --id 186 --save_to ../data/wine_ex.csv
+
+STEP 2
+python clean_data.py --raw-data ../data/wine.csv

@@ -1,10 +1,6 @@
 ---
 title: Wine Chromatic Profile Prediction Project
-author: 
-  - Adrian Leung
-  - Daria Khon
-  - Farhan Bin Faisal
-  - Zhiwei Zhang
+author: "Adrian Leung, Daria Khon, Farhan Bin Faisal & Zhiwei Zhang"
 format: 
   html:
     toc: true
@@ -19,6 +15,7 @@ jupyter:
     name: wine
     language: python
     display_name: Python (wine)
+echo: false
 ---
 
 ### Group 22
@@ -59,280 +56,13 @@ wine_quality = fetch_ucirepo(id=186)
 wine = pd.DataFrame(wine_quality.data.original) 
 wine.to_csv("../data/wine.csv", index=False)
 wine = pd.read_csv("../data/wine.csv")
-```
 
-### Data Validation Checks Before Data Splitting
+wine = wine.drop_duplicates()
+# split data into train and test for EDA 
+train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
 
-This section is to perform validation checks on the dataset that preceed the data analysis (especially before data splitting). This is to ensure the quality of the dataset is on par with our expectations and sufficient enough for a robust, high-quality analysis.  
-
-#### 1. Check Data File Format 
-The following checks whether the file exists in `/data` and the format of the data file in `/data` is in the correct `.csv` format.
-
-```{python}
-# input file path
-file_name = 'wine.csv'
-data_path = '../data/'
-path = data_path + file_name
-
-if not os.path.exists(path):
-    raise FileNotFoundError(f"{file_name} does not exist inside the '/data' directory")  
-if not path.endswith('.csv'):
-    raise ValueError('File extension is not in .csv format')
-else:
-    print('Test passed!')
-```
-
-#### 2. Check Correct Column Names
-The following checks whether the column names in the data file match the expected column names and miss any expected columns names.
-
-```{python}
-correct_columns = {
-    'fixed_acidity', 'volatile_acidity', 'citric_acid', 'residual_sugar', 'chlorides', 
-    'free_sulfur_dioxide', 'total_sulfur_dioxide', 'density', 'pH', 'sulphates', 
-    'alcohol', 'quality', 'color'
-}
-
-extracted_columns = set(wine.columns)
-
-if extracted_columns != correct_columns:
-    wrong_columns = extracted_columns.difference(correct_columns)
-    missing_columns = correct_columns.difference(extracted_columns)
-    if (len(wrong_columns) > 0) & (len(missing_columns) > 0):
-        raise ValueError(f"Unexpected column names: {list(wrong_columns)} and missing column names: {list(missing_columns)}")
-    elif len(wrong_columns) > 0:
-        raise ValueError(f"Unexpected column names: {list(wrong_columns)}")
-    elif len(missing_columns) > 0:
-        raise ValueError(f"Missing column names: {list(missing_columns)}")
-else:
-    print('Test passed!')
-```
-
-#### 3. No Empty Observations
-The following checks if there is any empty rows in the dataframe.
-
-```{python}
-schema = pa.DataFrameSchema(
-    checks = [
-        pa.Check(lambda df: ~(df.isna().all(axis=1)).any(), error = "Empty rows found.")
-    ]
-)
-try:
-    schema.validate(wine, lazy=True)
-    print("Test passed!")
-except pa.errors.SchemaErrors as e:
-    print("Test failed:", e)
-```
-
-#### 4. Check Missingness
-The following checks if the number of missingness (i.e. NaN) for each column is higher than a pre-defined threshold, 5% of total observations.
-
-```{python}
-schema = pa.DataFrameSchema(
-    {
-        "fixed_acidity": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'fixed_acidity' column."
-                                           ), nullable=True),
-        "volatile_acidity": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'volatile_acidity' column."
-                                           ), nullable=True), 
-        "citric_acid": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'citric_acid' column."
-                                           ), nullable=True),
-        "residual_sugar": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'residual_sugar' column."
-                                           ), nullable=True),
-        "chlorides": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'chlorides' column."
-                                           ), nullable=True),
-        "free_sulfur_dioxide": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'free_sulfur_dioxide' column."
-                                           ), nullable=True),
-        "total_sulfur_dioxide": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'total_sulfur_dioxide' column."
-                                           ), nullable=True),
-        "density": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'density' column."
-                                           ), nullable=True),
-        "pH": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'pH' column."
-                                           ), nullable=True),
-        "sulphates": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'sulphates' column."
-                                           ), nullable=True),
-        "alcohol": pa.Column(float, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'alcohol' column."
-                                           ), nullable=True),
-        "quality": pa.Column(int, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'quality' column."
-                                           ), nullable=True),
-        "color": pa.Column(str, 
-                                   pa.Check(lambda s: s.isna().mean() <= 0.05, 
-                                            element_wise = False, 
-                                            error = "Too many null values in 'color' column."
-                                           ), nullable=True),
-    }
-)
-try:
-    schema.validate(wine, lazy=True)
-    print("Test passed!")
-except pa.errors.SchemaErrors as e:
-    print("Test failed:", e)
-```
-
-#### 5. Check Correct Column Types
-The following check the data types for each column to ensure the data types match our expectations.
-
-```{python}
-schema = pa.DataFrameSchema(
-    {
-        "fixed_acidity": pa.Column(float),
-        "volatile_acidity": pa.Column(float),
-        "citric_acid": pa.Column(float),
-        "residual_sugar": pa.Column(float),
-        "chlorides": pa.Column(float),
-        "free_sulfur_dioxide": pa.Column(float),
-        "total_sulfur_dioxide": pa.Column(float),
-        "density": pa.Column(float),
-        "pH": pa.Column(float),
-        "sulphates": pa.Column(float),
-        "alcohol": pa.Column(float),
-        "quality": pa.Column(int),
-        "color": pa.Column(str), 
-    }
-)
-
-try:
-    schema.validate(wine, lazy=True)
-    print("Test passed!")
-except pa.errors.SchemaErrors as e:
-    print("Test failed:", e)
-    print("Failure Details:")
-    print(e.failure_cases)
-```
-
-#### 5. Check Duplicate Observations
-The following will check if there are duplicate observations in the dataframe.
-
-```{python}
-# Duplicate observation check
-schema = pa.DataFrameSchema(
-    checks=[
-        pa.Check(lambda df: ~df.duplicated().any(), error="Duplicate rows found.") 
-    ]
-)
-
-try:
-    schema.validate(wine, lazy=True)
-    print("Test passed!")
-except pa.errors.SchemaErrors as e:
-    print("Test failed:")
-    failed_result = pd.DataFrame(e.failure_cases)
-    print(failed_result.to_string())
-```
-
-For this test, the result shows that we have duplicate rows. To handle this issue, we will generate further test and disscussion later about these part of data duplication. 
-
-#### 6. Check Outliers or Anomalous Values
-The following will check if there are outliers in the dataframe that are not inside the expected ranges. We have decided the ranges using the explanations below:
-
-`fixed_acidity`: it should be a float between 3.5 and 16. Extreme values outside this range are rare and could indicate measurement errors or outliers.
-
-`volatile_acidity` : a float column between 0.08 and 1.6. Higher values indicate excessive volatile acidity, which could be abnormal for wine quality.
-
-`citric_acid`: a float column between 0 and 1. Citric acid levels rarely exceed 1. A value of 0 is acceptable but beyond 1.0 may suggest data anomalies. 
-
-`residual_sugar`: a float column between 0.5 and 66. While white wines have higher residual sugar, 66 is a reasonable upper limit based on the observed range. Values exceeding this are highly unusual and likely outliers.
-
-`chlorides`: a float column between 0.01 and 0.7. The majority of chloride values are tightly distributed below 0.7.
-
-`free_sulfur_dioxide`: a float column between 0 and 200. Values beyond 200 are rare and not typical in wines. 
-
-`total_sulfur_dioxide`: a float column between 0 and 400. Total sulfur dioxide values above 400 are uncommon and may indicate anomalies in the data or unusual winemaking practices.
-
-`density`: a float column between 0.985 and 1.04. Density for wines typically lies within this range.
-
-`pH`: a float column between 2.5 and 4. Wine pH is generally between 2.5 and 4.0, consistent with its acidic nature. Values outside this range are rare and potentially invalid. 
-
-`sulphates`: a float column between 0.2 and 1.8. Most sulphates fall within this range; higher values indicate unusual conditions. Lower values below 0.2 are atypical and may require closer inspection.
-
-`alcohol`: a float column between 8 and 15. Wine alcohol content is normally within 8% to 15%. Values outside this range suggest non-standard wine or errors in measurement.
-
-`quality`: a float column between 3 and 9. The wine quality score ranges from 3 to 9 based on the dataset. 
-
-```{python}
-# Column types and outliers check
-schema = pa.DataFrameSchema(
-    {
-        "fixed_acidity": pa.Column(float, pa.Check.between(3.5, 16)),
-        "volatile_acidity": pa.Column(float, pa.Check.between(0.08, 1.6)),
-        "citric_acid": pa.Column(float, pa.Check.between(0.0, 1)),
-        "residual_sugar": pa.Column(float, pa.Check.between(0.5, 66)),
-        "chlorides": pa.Column(float, pa.Check.between(0.01, 0.7)),
-        "free_sulfur_dioxide": pa.Column(float, pa.Check.between(0, 200)),
-        "total_sulfur_dioxide": pa.Column(float, pa.Check.between(0, 400)),
-        "density": pa.Column(float, pa.Check.between(0.985, 1.04)),
-        "pH": pa.Column(float, pa.Check.between(2.5, 4.0)),
-        "sulphates": pa.Column(float, pa.Check.between(0.2, 1.8)),
-        "alcohol": pa.Column(float, pa.Check.between(8.0, 15.0)),
-        "quality": pa.Column(int, pa.Check.between(3, 9)),
-        "color": pa.Column(str, pa.Check.isin(["red", "white"]))
-    }
-)
-
-try:
-    schema.validate(wine, lazy = True)
-    print("Test pass!")
-except pa.errors.SchemaErrors as e:
-    print("Test failed:")
-    failed_result = pd.DataFrame(e.failure_cases)
-    print(failed_result.to_string())
-    
-```
-
-Based on the test result, we do have several outliers for feature `citric_acid`, `chlorides`, `free_sulfur_dioxid`, `total_sulfur_dioxide`, `pH`, and `sulphates`. The outliers exhibit minimal deviations from the predefined thresholds and represent only a small fraction of the total dataset. These slight exceedances are unlikely to significantly influence the analysis or model performance. Therefore, we will ignore them in this case.
-
-#### 7. Check Category levels
-The following will check if categorical feature has any string mismatch or singla value. For this data set, there's one categorical feature `color`, which should have levels of "red" and "white".
-
-```{python}
-# Category levels check
-schema = pa.DataFrameSchema(
-    {
-        "color": pa.Column(str, pa.Check.isin(["red", "white"]))
-    }
-)
-
-try:
-    schema.validate(wine, lazy = True)
-    print("Test pass!")
-except pa.errors.SchemaErrors as e:
-    print("Test fail:", e)
-    print("Failure Details:")
-    print(e.failure_cases)
+wine_train = pd.read_csv("../data/wine_train.csv")
+wine_test = pd.read_csv("../data/wine_test.csv")
 ```
 
 ### Exploratory Data Analysis
@@ -340,19 +70,13 @@ except pa.errors.SchemaErrors as e:
 To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.
 
 ```{python}
-wine = wine.drop_duplicates()
-# split data into train and test for EDA 
-train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
-```
-
-```{python}
 print("Feature Datatypes\n")
-print(train_df.info())
+print(wine_train.info())
 ```
 
 ```{python}
 print("Summary Statistics\n")
-train_df.describe()
+wine_train.describe()
 ```
 
 ```{python}
@@ -555,4 +279,4 @@ With the results being near perfect with the predictions on the test data, this 
 The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.  
 
 ___
-# REFERENCES
+## REFERENCES
