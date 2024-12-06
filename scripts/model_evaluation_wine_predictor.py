@@ -20,11 +20,6 @@ from sklearn.model_selection import (
 )
 from scipy.stats import loguniform
 
-from sklearn.preprocessing import StandardScaler, OrdinalEncoder
-from sklearn.compose import make_column_transformer
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
-
 @click.command()
 @click.option('--train-data', type=str, help="Path to train data")
 @click.option('--test-data', type=str, help="Path to test data")

@@ -36,7 +36,6 @@ def main(raw_data):
 
     # clean data
     wine = pd.read_csv(raw_data).drop_duplicates()
-    wine.to_csv('../data/wine_debug.csv')
     
     # create the split
     train_df, test_df = train_test_split(
