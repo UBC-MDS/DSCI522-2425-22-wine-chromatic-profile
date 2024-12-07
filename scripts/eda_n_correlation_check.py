@@ -1,5 +1,5 @@
 # eda_n_correlation_check.py
-# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
+# author: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
 # date: 2024-12-05
 
 import os
