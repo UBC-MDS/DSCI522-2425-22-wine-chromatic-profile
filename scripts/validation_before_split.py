@@ -24,7 +24,7 @@ def define_schemas():
         "sulphates": pa.Column(float, base_checks, nullable=True),
         "alcohol": pa.Column(float, base_checks, nullable=True),
         "quality": pa.Column(int, base_checks, nullable=True),
-        "color": pa.Column(str, base_checks, nullable=True),
+        "color": pa.Column(str, base_checks, nullable=True)
     })
 
     outlier_schema = pa.DataFrameSchema({
@@ -39,8 +39,7 @@ def define_schemas():
         "pH": pa.Column(float, pa.Check.between(2.5, 4.0)),
         "sulphates": pa.Column(float, pa.Check.between(0.2, 1.8)),
         "alcohol": pa.Column(float, pa.Check.between(8.0, 15.0)),
-        "quality": pa.Column(int, pa.Check.between(3, 9)),
-        "color": pa.Column(str, pa.Check.isin(["red", "white"])),
+        "quality": pa.Column(int, pa.Check.between(3, 9))
     })
 
     category_schema = pa.DataFrameSchema({
@@ -51,7 +50,13 @@ def define_schemas():
         pa.Check(lambda df: ~df.duplicated().any(), error="Duplicate rows found.")
     ])
 
-    return general_schema, outlier_schema, category_schema, duplicate_check
+    empty_row_check = pa.DataFrameSchema(
+            checks=[
+                pa.Check(lambda df: ~(df.isna().all(axis=1)).any(), error="Empty rows found.")
+    ])
+
+
+    return general_schema, outlier_schema, category_schema, duplicate_check, empty_row_check
 
 
 # Validate column names
@@ -97,14 +102,22 @@ def main(file_name, data_path):
     validate_column_names(wine, correct_columns)
     
     # Load schemas
-    general_schema, outlier_schema, category_schema, duplicate_check = define_schemas()
+    general_schema, outlier_schema, category_schema, duplicate_check, empty_row_check = define_schemas()
 
-    # General validation
+    # General validation (Colum type check & Missingness check)
     try:
         general_schema.validate(wine, lazy=True)
         print("General validation passed!")
     except pa.errors.SchemaErrors as e:
         print("General validation failed:", e)
+
+    # Empty row validation
+    try:
+        empty_row_check.validate(wine, lazy=True)
+        print("Empty row check passed!")
+    except pa.errors.SchemaErrors as e:
+        print("Empty row check failed:")
+        print(pd.DataFrame(e.failure_cases).to_string())
 
     # Outlier validation
     try:
