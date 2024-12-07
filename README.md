@@ -12,7 +12,7 @@ The data set we used in this project was created by By P. Cortez, A. Cerdeira, F
 The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-wine-chromatic-profile/).
 
 # Dependencies
-- [Docke](https://www.docker.com/)
+- [Docker](https://www.docker.com/)
 - [Jupyter Lab](https://jupyter.org/)
 - or [VS CODE with Jupyter Extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 
