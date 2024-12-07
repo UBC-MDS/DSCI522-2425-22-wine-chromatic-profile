@@ -71,7 +71,7 @@ best_model_accuracy = random_search.score(X_test, y_test)
 ```
 
 ___   
-### SUMMARY   
+## SUMMARY   
 ___   
 
 In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on unseen test data. The precision-recall analysis indicated high precision and recall scores, consistently above 0.98, further corroborated by the confusion matrix, which showed minimal misclassifications.
@@ -79,7 +79,7 @@ In this project, we developed a machine learning model to predict the color of w
 While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.
 
 ___
-### INTRODUCTION  
+## INTRODUCTION  
 ___   
 
 Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer **whether we accurately predict the color of wine using its physiochemical properties**
@@ -87,15 +87,21 @@ Wine classification plays a crucial role in both production and quality assessme
 Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry's adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.
 
 ___  
-### METHODS
+## METHODS
 ___
 
-The code for this analysis and report is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
-
-#### Data
+### Data
 
 The dataset for this project is sourced from the UCI Machine Learning Repository [@dua2017uci] and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.
 
+### Analysis
+The logistic regression algorithm was used to build a classification model to predict whether a wine sample is red or white (as defined by the `color` column in the dataset). All 11 physiochemical features in the dataset, including fixed acidity, volatile acidity, pH, and alcohol content, were utilized for model training. The dataset was split into 70% for the training set and 30% for the test set.  
+
+Preprocessing steps included removing duplicate entries, ordinal encoding for the `quality` feature, and standardizing all numeric features to ensure uniform scaling. A randomized search with 10-fold cross-validation was conducted, using F1 as the scoring metric, to fine-tune the regularization parameter (`C`). This process helped minimize classification bias and maximize accuracy while identifying the optimal model. Balanced class weights were employed to address potential class imbalances in the dataset.  
+
+The Python programming language [@python3reference] and the following libraries were utilized for the analysis: NumPy [@harris2020numpy] for numerical computations, Pandas [@mckinney2010pandas] for data manipulation, Altair [@vanderplas2018altair] for visualization, and scikit-learn [@pedregosa2011scikit] for model development and evaluation. The complete analysis code is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
+
+___
 
 ### Exploratory Data Analysis
 

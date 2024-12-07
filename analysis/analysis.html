@@ -3074,7 +3074,10 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#references" id="toc-references" class="nav-link active" data-scroll-target="#references">REFERENCES</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">SUMMARY</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">INTRODUCTION</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">METHODS</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">REFERENCES</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../../../../../analysis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
@@ -3106,28 +3109,33 @@ vertical-align: -.125em;
 
 
 <hr>
-<section id="summary" class="level3">
-<h3 class="anchored" data-anchor-id="summary">SUMMARY</h3>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">SUMMARY</h2>
 <hr>
 <p>In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of 0.98 on unseen test data. The precision-recall analysis indicated high precision and recall scores, consistently above 0.98, further corroborated by the confusion matrix, which showed minimal misclassifications.</p>
 <p>While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.</p>
 <hr>
 </section>
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">INTRODUCTION</h3>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">INTRODUCTION</h2>
 <hr>
 <p>Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer <strong>whether we accurately predict the color of wine using its physiochemical properties</strong></p>
 <p>Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry’s adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.</p>
 <hr>
 </section>
-<section id="methods" class="level3">
-<h3 class="anchored" data-anchor-id="methods">METHODS</h3>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">METHODS</h2>
 <hr>
-<p>The code for this analysis and report is available on GitHub: <a href="https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git" class="uri">https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git</a>.</p>
-<section id="data" class="level4">
-<h4 class="anchored" data-anchor-id="data">Data</h4>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
 <p>The dataset for this project is sourced from the UCI Machine Learning Repository <span class="citation" data-cites="dua2017uci">(<a href="#ref-dua2017uci" role="doc-biblioref">Dua and Graff 2017</a>)</span> and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.</p>
 </section>
+<section id="analysis" class="level3">
+<h3 class="anchored" data-anchor-id="analysis">Analysis</h3>
+<p>The logistic regression algorithm was used to build a classification model to predict whether a wine sample is red or white (as defined by the <code>color</code> column in the dataset). All 11 physiochemical features in the dataset, including fixed acidity, volatile acidity, pH, and alcohol content, were utilized for model training. The dataset was split into 70% for the training set and 30% for the test set.</p>
+<p>Preprocessing steps included removing duplicate entries, ordinal encoding for the <code>quality</code> feature, and standardizing all numeric features to ensure uniform scaling. A randomized search with 10-fold cross-validation was conducted, using F1 as the scoring metric, to fine-tune the regularization parameter (<code>C</code>). This process helped minimize classification bias and maximize accuracy while identifying the optimal model. Balanced class weights were employed to address potential class imbalances in the dataset.</p>
+<p>The Python programming language <span class="citation" data-cites="python3reference">(<a href="#ref-python3reference" role="doc-biblioref">Van Rossum and Drake 2009</a>)</span> and the following libraries were utilized for the analysis: NumPy <span class="citation" data-cites="harris2020numpy">(<a href="#ref-harris2020numpy" role="doc-biblioref">Harris et al. 2020</a>)</span> for numerical computations, Pandas <span class="citation" data-cites="mckinney2010pandas">(<a href="#ref-mckinney2010pandas" role="doc-biblioref">McKinney 2010</a>)</span> for data manipulation, Altair <span class="citation" data-cites="vanderplas2018altair">(<a href="#ref-vanderplas2018altair" role="doc-biblioref">VanderPlas 2018</a>)</span> for visualization, and scikit-learn <span class="citation" data-cites="pedregosa2011scikit">(<a href="#ref-pedregosa2011scikit" role="doc-biblioref">Pedregosa et al. 2011</a>)</span> for model development and evaluation. The complete analysis code is available on GitHub: <a href="https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git" class="uri">https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git</a>.</p>
+<hr>
 </section>
 <section id="exploratory-data-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h3>
@@ -3161,7 +3169,7 @@ Figure 2: Correlation between Wine Color Prediction Features
 Table 1: Cross Validation Results
 </figcaption>
 <div aria-describedby="tbl-cross-val-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="64">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="20">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
@@ -3246,7 +3254,7 @@ Table 1: Cross Validation Results
 Table 2: Random Search Results
 </figcaption>
 <div aria-describedby="tbl-random-search-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="65">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="21">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 2%">
@@ -3384,6 +3392,7 @@ Figure 4: Precision Recall Curve
 <p>With the results being near perfect with the predictions on the test data, this is out of our expectations as we would expect there will be a more flawed prediction that will not perform as great in both recall and precision in general (especially not when both recall and precision are higher than 0.98).</p>
 <p>The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.</p>
 <hr>
+</section>
 </section>
 <section id="references" class="level2 unnumbered">
 
