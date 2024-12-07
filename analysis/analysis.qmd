@@ -94,23 +94,6 @@ ___
 
 The dataset for this project is sourced from the UCI Machine Learning Repository [@dua2017uci] and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.
 
-### Analysis
-The logistic regression algorithm was used to build a classification model to predict whether a wine sample is red or white (as defined by the `color` column in the dataset). All 11 physiochemical features in the dataset, including fixed acidity, volatile acidity, pH, and alcohol content, were utilized for model training. The dataset was split into 70% for the training set and 30% for the test set.  
-
-Preprocessing steps included removing duplicate entries, ordinal encoding for the `quality` feature, and standardizing all numeric features to ensure uniform scaling. A randomized search with 10-fold cross-validation was conducted, using F1 as the scoring metric, to fine-tune the regularization parameter (`C`). This process helped minimize classification bias and maximize accuracy while identifying the optimal model. Balanced class weights were employed to address potential class imbalances in the dataset.  
-
-The Python programming language [@python3reference] and the following libraries were utilized for the analysis: NumPy [@harris2020numpy] for numerical computations, Pandas [@mckinney2010pandas] for data manipulation, Altair [@vanderplas2018altair] for visualization, and scikit-learn [@pedregosa2011scikit] for model development and evaluation. The complete analysis code is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
-
-___
-
-### Exploratory Data Analysis
-
-The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.
-
-
-To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.
-
-
 
 ```{python}
 # #| label: tbl-feat-datatypes
@@ -124,24 +107,36 @@ To examine the data, we first looked at the data types of columns we will be wor
 # Markdown(summary_df.to_markdown())
 ```
 
+
+### Validation
+We conducted several validation checks on our dataset, including assessments for duplicates, correct data types, and missing values, most of which passed successfully. However, the outlier check flagged a few variables with potential outliers. To keep the analysis straightforward, we chose not to remove these outliers for this iteration. Future iterations could explore handling these outliers more thoroughly to refine the analysis.
+
+### Analysis
+The logistic regression algorithm was used to build a classification model to predict whether a wine sample is red or white (as defined by the `color` column in the dataset). All 11 physiochemical features in the dataset, including fixed acidity, volatile acidity, pH, and alcohol content, were utilized for model training. The dataset was split into 70% for the training set and 30% for the test set.  
+
+Preprocessing steps included removing duplicate entries, ordinal encoding for the `quality` feature, and standardizing all numeric features to ensure uniform scaling. A randomized search with 10-fold cross-validation was conducted, using F1 as the scoring metric, to fine-tune the regularization parameter (`C`). This process helped minimize classification bias and maximize accuracy while identifying the optimal model. Balanced class weights were employed to address potential class imbalances in the dataset.  
+
+The Python programming language [@python3reference] and the following libraries were utilized for the analysis: NumPy [@harris2020numpy] for numerical computations, Pandas [@mckinney2010pandas] for data manipulation, Altair [@vanderplas2018altair] for visualization, and scikit-learn [@pedregosa2011scikit] for model development and evaluation. The complete analysis code is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
+
+___
+## RESULTS   
+___    
+To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class. While most predictors, including mean and maximum measurements, showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.
+
+We also examined multicollinearity among predictors, initially identifying high correlations between alcohol and quality, as well as total sulfur dioxide and free sulfur dioxide. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.
+
 ![Distribution of Features per Target Class](../results/figures/feature_densities_by_class.png){#fig-feat-dist}
 
 ![Correlation between Wine Color Prediction Features](../results/figures/feature_correlation.png){#fig-feat-cor}
 
-The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. 
-<br>
-#### We will next check, feature-feature correlations and feature-target correlations to check for any anomalous correlations and prevent multicolinearity and overfitting in our model.
-If any anomalous correlations are found, the script will throw and error and we will examine the features in question and determine whether the best plan of action would be dropping the feature or not.
 
 ```{python}
-# imports for correlation anomality validations
+# #| label: tbl-cross-val
+# #| tbl-cap: Cross Validation Results
+# Markdown(cross_validation_results.to_markdown())
 ```
 
-```{python}
-#| label: tbl-cross-val
-#| tbl-cap: Cross Validation Results
-Markdown(cross_validation_results.to_markdown())
-```
+We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (`C`), which was found to be `{python} round(best_params, 2)`, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with "red" as the positive class) as our scoring metric.
 
 ```{python}
 #| label: tbl-random-search
@@ -149,23 +144,15 @@ Markdown(cross_validation_results.to_markdown())
 Markdown(random_search_results.to_markdown())
 ```
 
-#### To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model's predictions are consistent across these datasets or if there is a significant drift.
+Prior to judging model performance on the test set, we also validated that the target distributions beterrn out training and tes set were comparable. We ensured this using a prediciton drift check. The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) 
 
 ```{python}
-# target_drift_score = pd.read_csv("../results/tables/drift_score.csv")
-
+target_drift_score = pd.read_csv("../results/tables/drift_score.csv").iloc[0, 0]
 ```
 
-The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
+The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Drift Score of `{python} round(target_drift_score, 3)`) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
 
-----
-The analysis was performed using Python [@python3reference] and the following libraries: requests [@reitz2011requests] for data retrieval, zipfile [@vanrossum2009python] for handling compressed files, numpy [@harris2020numpy] for numerical operations, pandas [@mckinney2010pandas] for data manipulation, altair [@vanderplas2018altair] for data visualization, and scikit-learn [@pedregosa2011scikit] for model implementation and evaluation.
-
-___
-### RESULTS
-___
-
-Accuracy score on the test data was `{python} best_model_accuracy`
+Finally, we evaluated the model on the test set, generating a confusion matrix and a precision-recall (PR) curve to summarize the results. 
 
 ![Confusion Matric](../results/figures/confusion_matrix.png){#fig-confusion}
 
@@ -174,13 +161,19 @@ Accuracy score on the test data was `{python} best_model_accuracy`
 ___
 ### DISCUSSION
 ___
-From the results above, we see that the logistic regression with balanced class weight performs very well in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (>0.994), we decide to do a further randomized search cross-validation using the F1 score to find an optimized hyperparameter C that can minimize our classification bias.  
 
-Using the optimized model on the test data, we see that the model has a high accuracy score as well (0.985). Moreover, from the confusion matrix, we see that there are very few false positives (false red) and false negatives (false white) compared to the true ones. This implies that the recall and precision scores are near 1 on the test data. This is further supported by the precision-recall curve as the average precision is 0.99 and the precision score maintains constantly very close to 1 when adjusting the threshold in the model.  
+The confusion matrix (Figure @fig-confusion) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of 0.994 with a standard deviation of 0.003. The precision-recall (PR) curve (Figure @fig-pr) further demonstrates the model's robust performance across various thresholds, supported by a high test precision of 0.987 ± 0.006 and test recall of 0.991 ± 0.009. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
 
-With the results being near perfect with the predictions on the test data, this is out of our expectations as we would expect there will be a more flawed prediction that will not perform as great in both recall and precision in general (especially not when both recall and precision are higher than 0.98). 
 
-The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.  
+
+From the results above, we see that the logistic regression with balanced class weight performs very well on the test set. in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (>0.994), 
+
+ 
+call and precision are higher than 0.98. 
+
+The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding 0.98.  
+
+While these high scores suggest the model is likely to perform well on new data, they also raise concerns about potential overfitting. The model's exceptional performance on both the training and test sets may indicate limited generalizability to truly unseen data, warranting further evaluation to ensure robustness.
 
 ___
 ## REFERENCES

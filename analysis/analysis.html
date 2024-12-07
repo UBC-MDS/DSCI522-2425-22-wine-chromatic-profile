@@ -3077,6 +3077,7 @@ vertical-align: -.125em;
   <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">SUMMARY</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">INTRODUCTION</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">METHODS</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">RESULTS</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">REFERENCES</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../../../../../analysis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
@@ -3130,6 +3131,10 @@ vertical-align: -.125em;
 <h3 class="anchored" data-anchor-id="data">Data</h3>
 <p>The dataset for this project is sourced from the UCI Machine Learning Repository <span class="citation" data-cites="dua2017uci">(<a href="#ref-dua2017uci" role="doc-biblioref">Dua and Graff 2017</a>)</span> and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.</p>
 </section>
+<section id="validation" class="level3">
+<h3 class="anchored" data-anchor-id="validation">Validation</h3>
+<p>We conducted several validation checks on our dataset, including assessments for duplicates, correct data types, and missing values, most of which passed successfully. However, the outlier check flagged a few variables with potential outliers. To keep the analysis straightforward, we chose not to remove these outliers for this iteration. Future iterations could explore handling these outliers more thoroughly to refine the analysis.</p>
+</section>
 <section id="analysis" class="level3">
 <h3 class="anchored" data-anchor-id="analysis">Analysis</h3>
 <p>The logistic regression algorithm was used to build a classification model to predict whether a wine sample is red or white (as defined by the <code>color</code> column in the dataset). All 11 physiochemical features in the dataset, including fixed acidity, volatile acidity, pH, and alcohol content, were utilized for model training. The dataset was split into 70% for the training set and 30% for the test set.</p>
@@ -3137,10 +3142,12 @@ vertical-align: -.125em;
 <p>The Python programming language <span class="citation" data-cites="python3reference">(<a href="#ref-python3reference" role="doc-biblioref">Van Rossum and Drake 2009</a>)</span> and the following libraries were utilized for the analysis: NumPy <span class="citation" data-cites="harris2020numpy">(<a href="#ref-harris2020numpy" role="doc-biblioref">Harris et al. 2020</a>)</span> for numerical computations, Pandas <span class="citation" data-cites="mckinney2010pandas">(<a href="#ref-mckinney2010pandas" role="doc-biblioref">McKinney 2010</a>)</span> for data manipulation, Altair <span class="citation" data-cites="vanderplas2018altair">(<a href="#ref-vanderplas2018altair" role="doc-biblioref">VanderPlas 2018</a>)</span> for visualization, and scikit-learn <span class="citation" data-cites="pedregosa2011scikit">(<a href="#ref-pedregosa2011scikit" role="doc-biblioref">Pedregosa et al. 2011</a>)</span> for model development and evaluation. The complete analysis code is available on GitHub: <a href="https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git" class="uri">https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git</a>.</p>
 <hr>
 </section>
-<section id="exploratory-data-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h3>
-<p>The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.</p>
-<p>To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature’s distribution in respect to color and feaature correlations.</p>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">RESULTS</h2>
+<hr>
+<p>To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class. While most predictors, including mean and maximum measurements, showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.</p>
+<p>We also examined multicollinearity among predictors, initially identifying high correlations between alcohol and quality, as well as total sulfur dioxide and free sulfur dioxide. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.</p>
 <div id="fig-feat-dist" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-feat-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3161,100 +3168,15 @@ Figure 2: Correlation between Wine Color Prediction Features
 </figcaption>
 </figure>
 </div>
-<p>The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. <br> #### We will next check, feature-feature correlations and feature-target correlations to check for any anomalous correlations and prevent multicolinearity and overfitting in our model. If any anomalous correlations are found, the script will throw and error and we will examine the features in question and determine whether the best plan of action would be dropping the feature or not.</p>
+<p>We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (<code>C</code>), which was found to be 1.27, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with “red” as the positive class) as our scoring metric.</p>
 <div class="cell" data-execution_count="9">
-<div id="tbl-cross-val" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cross-val-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 1: Cross Validation Results
-</figcaption>
-<div aria-describedby="tbl-cross-val-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="20">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: right;"></th>
-<th style="text-align: left;">Scoring Metric</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">std</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">fit_time</td>
-<td style="text-align: right;">0.032</td>
-<td style="text-align: right;">0.012</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">score_time</td>
-<td style="text-align: right;">0.024</td>
-<td style="text-align: right;">0.004</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">test_accuracy</td>
-<td style="text-align: right;">0.994</td>
-<td style="text-align: right;">0.003</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">train_accuracy</td>
-<td style="text-align: right;">0.994</td>
-<td style="text-align: right;">0.001</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">test_precision</td>
-<td style="text-align: right;">0.987</td>
-<td style="text-align: right;">0.006</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">train_precision</td>
-<td style="text-align: right;">0.985</td>
-<td style="text-align: right;">0.002</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">test_recall</td>
-<td style="text-align: right;">0.991</td>
-<td style="text-align: right;">0.009</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">train_recall</td>
-<td style="text-align: right;">0.991</td>
-<td style="text-align: right;">0.002</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">test_f1</td>
-<td style="text-align: right;">0.989</td>
-<td style="text-align: right;">0.005</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">train_f1</td>
-<td style="text-align: right;">0.988</td>
-<td style="text-align: right;">0.001</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<div class="cell" data-execution_count="10">
-<div id="tbl-random-search" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
+<div id="tbl-random-search" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-random-search-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 2: Random Search Results
+Table 1: Random Search Results
 </figcaption>
 <div aria-describedby="tbl-random-search-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="21">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="9">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 2%">
@@ -3350,18 +3272,9 @@ Table 2: Random Search Results
 </figure>
 </div>
 </div>
-<section id="to-validate-the-expected-distribution-of-the-target-variable-we-will-use-the-prediction-drift-check-to-compare-the-predicted-distributions-of-the-target-variable-between-the-training-and-testing-datasets.-this-helps-identify-whether-the-models-predictions-are-consistent-across-these-datasets-or-if-there-is-a-significant-drift." class="level4">
-<h4 class="anchored" data-anchor-id="to-validate-the-expected-distribution-of-the-target-variable-we-will-use-the-prediction-drift-check-to-compare-the-predicted-distributions-of-the-target-variable-between-the-training-and-testing-datasets.-this-helps-identify-whether-the-models-predictions-are-consistent-across-these-datasets-or-if-there-is-a-significant-drift.">To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model’s predictions are consistent across these datasets or if there is a significant drift.</h4>
-<p>The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.</p>
-<hr>
-<p>The analysis was performed using Python <span class="citation" data-cites="python3reference">(<a href="#ref-python3reference" role="doc-biblioref">Van Rossum and Drake 2009</a>)</span> and the following libraries: requests <span class="citation" data-cites="reitz2011requests">(<a href="#ref-reitz2011requests" role="doc-biblioref">Reitz 2011</a>)</span> for data retrieval, zipfile <span class="citation" data-cites="vanrossum2009python">(<a href="#ref-vanrossum2009python" role="doc-biblioref">Rossum and Drake 2009</a>)</span> for handling compressed files, numpy <span class="citation" data-cites="harris2020numpy">(<a href="#ref-harris2020numpy" role="doc-biblioref">Harris et al. 2020</a>)</span> for numerical operations, pandas <span class="citation" data-cites="mckinney2010pandas">(<a href="#ref-mckinney2010pandas" role="doc-biblioref">McKinney 2010</a>)</span> for data manipulation, altair <span class="citation" data-cites="vanderplas2018altair">(<a href="#ref-vanderplas2018altair" role="doc-biblioref">VanderPlas 2018</a>)</span> for data visualization, and scikit-learn <span class="citation" data-cites="pedregosa2011scikit">(<a href="#ref-pedregosa2011scikit" role="doc-biblioref">Pedregosa et al. 2011</a>)</span> for model implementation and evaluation.</p>
-<hr>
-</section>
-</section>
-<section id="results" class="level3">
-<h3 class="anchored" data-anchor-id="results">RESULTS</h3>
-<hr>
-<p>Accuracy score on the test data was 0.9824120603015074</p>
+<p>Prior to judging model performance on the test set, we also validated that the target distributions beterrn out training and tes set were comparable. We ensured this using a prediciton drift check. The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre)</p>
+<p>The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Drift Score of 0) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.</p>
+<p>Finally, we evaluated the model on the test set, generating a confusion matrix and a precision-recall (PR) curve to summarize the results.</p>
 <div id="fig-confusion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3383,14 +3296,14 @@ Figure 4: Precision Recall Curve
 </figure>
 </div>
 <hr>
-</section>
 <section id="discussion" class="level3">
 <h3 class="anchored" data-anchor-id="discussion">DISCUSSION</h3>
 <hr>
-<p>From the results above, we see that the logistic regression with balanced class weight performs very well in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (&gt;0.994), we decide to do a further randomized search cross-validation using the F1 score to find an optimized hyperparameter C that can minimize our classification bias.</p>
-<p>Using the optimized model on the test data, we see that the model has a high accuracy score as well (0.985). Moreover, from the confusion matrix, we see that there are very few false positives (false red) and false negatives (false white) compared to the true ones. This implies that the recall and precision scores are near 1 on the test data. This is further supported by the precision-recall curve as the average precision is 0.99 and the precision score maintains constantly very close to 1 when adjusting the threshold in the model.</p>
-<p>With the results being near perfect with the predictions on the test data, this is out of our expectations as we would expect there will be a more flawed prediction that will not perform as great in both recall and precision in general (especially not when both recall and precision are higher than 0.98).</p>
-<p>The near perfect scores in the test data suggest that our model will probably do a great job in predicting the wine type given any new data. However, we also have to bear in mind that the possibility that the model might not perform as well on actual unseen data. These very high scores are quite alarming that we might have to worry that it somehow overfits on both our train and test data and cannot generalize over new unseen data.</p>
+<p>The confusion matrix (Figure <a href="#fig-confusion" class="quarto-xref">Figure 3</a>) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of 0.994 with a standard deviation of 0.003. The precision-recall (PR) curve (Figure <a href="#fig-pr" class="quarto-xref">Figure 4</a>) further demonstrates the model’s robust performance across various thresholds, supported by a high test precision of 0.987 ± 0.006 and test recall of 0.991 ± 0.009. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.</p>
+<p>From the results above, we see that the logistic regression with balanced class weight performs very well on the test set. in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (&gt;0.994),</p>
+<p>call and precision are higher than 0.98.</p>
+<p>The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding 0.98.</p>
+<p>While these high scores suggest the model is likely to perform well on new data, they also raise concerns about potential overfitting. The model’s exceptional performance on both the training and test sets may indicate limited generalizability to truly unseen data, warranting further evaluation to ensure robustness.</p>
 <hr>
 </section>
 </section>
@@ -3411,12 +3324,6 @@ McKinney, Wes. 2010. <span>“Data Structures for Statistical Computing in Pytho
 </div>
 <div id="ref-pedregosa2011scikit" class="csl-entry" role="listitem">
 Pedregosa, Fabian, Gaël Varoquaux, Alexandre Gramfort, Vincent Michel, Bertrand Thirion, Olivier Grisel, Mathieu Blondel, et al. 2011. <span>“Scikit-Learn: Machine Learning in <span>P</span>ython.”</span> <em>Journal of Machine Learning Research</em> 12: 2825–30. <a href="https://scikit-learn.org/">https://scikit-learn.org/</a>.
-</div>
-<div id="ref-reitz2011requests" class="csl-entry" role="listitem">
-Reitz, Kenneth. 2011. <span>“Requests: HTTP for Humans.”</span>
-</div>
-<div id="ref-vanrossum2009python" class="csl-entry" role="listitem">
-Rossum, Guido van, and Fred L. Drake. 2009. <em>Python Library Reference, Release 3.0</em>. Python Software Foundation.
 </div>
 <div id="ref-python3reference" class="csl-entry" role="listitem">
 Van Rossum, Guido, and Fred L. Drake. 2009. <em>Python 3 Reference Manual</em>. Scotts Valley, CA: CreateSpace.
