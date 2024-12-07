@@ -4,12 +4,13 @@ author: "Adrian Leung, Daria Khon, Farhan Bin Faisal & Zhiwei Zhang"
 format: 
   html:
     toc: true
+    toc-depth: 2
     embed-resources: true
     fig-numbering: true
     tbl-numbering: true
   pdf:
     toc: true
-    fig-pos: "H"
+    toc-depth: 2
     fig-numbering: true
     tbl-numbering: true
 editor: source
@@ -19,21 +20,71 @@ jupyter:
     name: wine
     language: python
     display_name: Python (wine)
-echo: false
+execute:
+  echo: false
+  warning: false
 ---
 
-### Group 22
+```{python}
+import pickle
+import pandas as pd 
+import numpy as np 
+from tabulate import tabulate
+from IPython.display import Markdown, display
+```
+
+
+```{python}
+# loading data 
+wine_train = pd.read_csv("../data/wine_train.csv")
+wine_test = pd.read_csv("../data/wine_test.csv")
+```
+
+```{python}
+info_df = pd.read_csv("../results/tables/feature_datatypes.csv")
+
+summary_df = pd.read_csv("../results/tables/summary_statistics.csv")
+```
+
+```{python}
+with open("../results/models/wine_pipeline.pickle", "rb") as file:
+    pipe = pickle.load(file)
+
+# Running cross validation on default model
+cross_validation_results = pd.read_csv("../results/tables/cross_validation.csv").rename(
+    columns={"Unnamed: 0": "Scoring Metric"}
+)
+
+# Hyperparameter optimization
+with open("../results/models/wine_random_search.pickle", "rb") as file:
+    random_search = pickle.load(file)
+
+random_search_results = pd.read_csv("../results/tables/random_search.csv")
+
+best_params = random_search.best_params_["logisticregression__C"]
+```
+
+```{python}
+X_test = wine_test.drop(columns = ["color"])
+y_test = wine_test["color"]
+best_model_accuracy = random_search.score(X_test, y_test)
+```
+
+___   
+### SUMMARY   
+___   
+
+In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on unseen test data. The precision-recall analysis indicated high precision and recall scores, consistently above 0.98, further corroborated by the confusion matrix, which showed minimal misclassifications.
+
+While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.
 
 ___
-### INTRODUCTION
-___
+### INTRODUCTION  
+___   
 
-This project seeks to answer the following question:   
-**"Can we predict the color of wine using its physiochemical properties, such as acidity, sugar content, and alcohol level?"** 
+Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer **whether we accurately predict the color of wine using its physiochemical properties**
 
-To answer this question, we are using a data set [@dua2017uci] from the Vinho Verde region in Portugal . These datasets, publicly available through the UCI Machine Learning Repository, include 11 physiochemical attributes for each wine sample—such as fixed acidity, volatile acidity, pH, and alcohol content—along with a sensory-based quality score ranging from 0 to 10. The red wine dataset contains 1,599 samples, while the white wine dataset includes 4,898 samples, enabling a comprehensive analysis across different types of wine.
-
-The ability to accurately classify wine color using machine learning could offer several advantages. For instance, winemakers and researchers could efficiently analyze large datasets, identify trends, and optimize production processes. Furthermore, consumers or wine retailers might use such tools to assess or verify wine characteristics without requiring advanced laboratory equipment. By developing a robust classification model, we aim to contribute to the wine industry’s growing adoption of data-driven methods, enhancing efficiency and accuracy in identifying and categorizing wines. Ultimately, this approach could lead to scalable, reproducible, and cost-effective methods for wine analysis.
+Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry's adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.
 
 ___  
 ### METHODS
@@ -41,69 +92,35 @@ ___
 
 The code for this analysis and report is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
 
-The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.
+#### Data
 
-```{python}
-import os
-import pandas as pd 
-import numpy as np 
-import pandera as pa
-import altair as alt
-import altair_ally as aly
-from ucimlrepo import fetch_ucirepo 
-from tabulate import tabulate
-from IPython.display import Markdown, display
-from sklearn.model_selection import train_test_split
-```
+The dataset for this project is sourced from the UCI Machine Learning Repository [@dua2017uci] and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.
 
-```{python}
-# loading data 
-wine_quality = fetch_ucirepo(id=186) 
-wine = pd.DataFrame(wine_quality.data.original) 
-
-wine = wine.drop_duplicates()
-# split data into train and test for EDA 
-train_df, test_df = train_test_split(wine, test_size=0.3, shuffle=True, random_state=123)
-
-wine_train = pd.read_csv("../data/wine_train.csv")
-wine_test = pd.read_csv("../data/wine_test.csv")
-```
 
 ### Exploratory Data Analysis
 
+The dataset was initially loaded into a single dataframe, and several data validation checks were performed to check the quality of the dataset. An exploratory data analysis was conducted afterwards to understand the distribution of features. This included checking for class imbalance in the target variable, examining collinearity between input features, and identifying the types of features present in the dataset. This analysis informed decisions regarding feature encoding in subsequent steps.
+
+
 To examine the data, we first looked at the data types of columns we will be working with: all features are numeric without any null values. Next, in order to select features for modelling, we examined each feature's distribution in respect to color and feaature correlations.
 
+
+
 ```{python}
-info_df = pd.DataFrame({
-    "Column": wine_train.columns,
-    "Non-Null Count": [wine_train[col].notnull().sum() for col in wine_train.columns],
-    "Data Type": [wine_train[col].dtype for col in wine_train.columns]
-})
+# #| label: tbl-feat-datatypes
+# #| tbl-cap: Feature Datatypes
+# Markdown(info_df.to_markdown())
 ```
 
 ```{python}
-#| label: tbl-feat-datatypes
-#| tbl-cap: Feature Datatypes
-Markdown(info_df.to_markdown())
+# #| label: tbl-describe
+# #| tbl-cap: Summary Statistics
+# Markdown(summary_df.to_markdown())
 ```
 
-```{python}
-#| label: tbl-describe
-#| tbl-cap: Summary Statistics
-Markdown(wine_train.describe().to_markdown())
-```
+![Distribution of Features per Target Class](../results/figures/feature_densities_by_class.png){#fig-feat-dist}
 
-```{python}
-aly.alt.data_transformers.enable('vegafusion')
-
-print("Figure 1: Distribution of Features per Target Class")
-aly.dist(train_df, color = "color")
-```
-
-```{python}
-print("Figure 2: Correlation between Wine Color Prediction Features\n")
-aly.corr(train_df)
-```
+![Correlation between Wine Color Prediction Features](../results/figures/feature_correlation.png){#fig-feat-cor}
 
 The class distributions for all predictors across all measurements show some overlap but display noticeable differences in their central tendencies and variability. The quality feature appears to have a tri-modal distribution and does not exhibit distinct differences based on the target class. However, it could still offer valuable predictive insights through interactions with other features. Therefore, we decided to build our predictive model with all the available features. 
 <br>
@@ -112,68 +129,7 @@ If any anomalous correlations are found, the script will throw and error and we 
 
 ```{python}
 # imports for correlation anomality validations
-from deepchecks.tabular import Dataset
-from deepchecks.tabular.checks import FeatureLabelCorrelation, FeatureFeatureCorrelation, PredictionDrift
-
-wine_train_ds = Dataset(train_df, label="color", cat_features=[])
-wine_test_ds = Dataset(test_df, label="color", cat_features=[])
-
-check_feat_lab_corr = FeatureLabelCorrelation().add_condition_feature_pps_less_than(0.8)
-check_feat_lab_corr_result = check_feat_lab_corr.run(dataset=wine_train_ds)
-
-if not check_feat_lab_corr_result.passed_conditions():
-    raise ValueError("Feature-Label correlation exceeds the maximum acceptable threshold.")
-
-check_feat_feat_corr = FeatureFeatureCorrelation().add_condition_max_number_of_pairs_above_threshold(threshold = 0.8, n_pairs = 0)
-check_feat_feat_corr_result = check_feat_feat_corr.run(dataset=wine_train_ds)
-
-if not check_feat_feat_corr_result.passed_conditions():
-    raise ValueError("Feature-feature correlation exceeds the maximum acceptable threshold.")
 ```
-
-
-```{python}
-# imports for modelling
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import ( 
-    make_scorer, recall_score, precision_score, f1_score
-)
-from sklearn.compose import make_column_transformer
-from sklearn.preprocessing import StandardScaler, OrdinalEncoder
-from sklearn.model_selection import (
-    cross_validate,
-    RandomizedSearchCV,
-)
-from scipy.stats import loguniform
-```
-
-```{python}
-X_train = train_df.drop(columns=["color"])
-X_test = test_df.drop(columns=["color"])
-y_train = train_df["color"]
-y_test = test_df["color"]
-```
-
-```{python}
-import pickle
-with open("../results/models/wine_pipeline.pickle", "rb") as file:
-    pipe = pickle.load(file)
-
-# Running cross validation on default model
-cross_validation_results = pd.read_csv("../results/table/cross_validation.csv")
-cross_validation_results = cross_validation_results.rename(
-    columns={"Unnamed: 0": "Scoring Metric"}
-)
-
-# Hyperparameter optimization
-with open("../results/models/wine_random_search.pickle", "rb") as file:
-    random_search = pickle.load(file)
-
-random_search_results = pd.read_csv("../results/table/random_search.csv")
-
-best_params = random_search.best_params_["logisticregression__C"]
-```
-
 
 ```{python}
 #| label: tbl-cross-val
@@ -190,21 +146,8 @@ Markdown(random_search_results.to_markdown())
 #### To validate the expected distribution of the target variable, we will use the Prediction Drift check to compare the predicted distributions of the target variable between the training and testing datasets. This helps identify whether the model's predictions are consistent across these datasets or if there is a significant drift.
 
 ```{python}
-# target_drift_check = PredictionDrift()
+# target_drift_score = pd.read_csv("../results/tables/drift_score.csv")
 
-# expected_distribution = {"red": 0.25, "white": 0.75} 
-# actual_distribution = train_df['color'].value_counts(normalize=True).to_dict()
-
-# for cat, prob in expected_distribution.items():
-#     if abs(actual_distribution.get(cat) - prob) > 0.1:
-#         print(f"Class '{cat}' deviates significantly from the expected distribution {prob}.")
-
-# target_dist_result = target_drift_check.run(
-#     wine_train_ds, 
-#     wine_test_ds, 
-#     model= random_search.best_estimator_
-# )
-# pd.DataFrame([target_dist_result.reduce_output()])
 ```
 
 The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
@@ -215,10 +158,6 @@ The analysis was performed using Python [@python3reference] and the following li
 ___
 ### RESULTS
 ___
-
-```{python}
-best_model_accuracy = random_search.score(X_test, y_test)
-```
 
 Accuracy score on the test data was `{python} best_model_accuracy`
 
