@@ -62,28 +62,3 @@ where you launched the container, and then type `docker compose rm`
 
 # References
 Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. UCI Machine Learning Repository. Available from: https://doi.org/10.24432/C56S3T.
-
-python download.py \
---id 186 \
---save_to data/wine_ex.csv
-
-python validation_before_split.py \
---file_name wine_ex.csv \
---data_path ../data/
-
-python clean_n_split_data.py \
---raw-data ../data/wine_ex.csv
-
-python eda_n_correlation_check.py \
---train-file ../data/wine_train.csv \
---output-img ../results/figures \
---output-table ../results/tables
-
-python preprocessing.py \
---pipe-to ../results/models
-
-python model_evaluation_wine_predictor.py --train-data ../data/wine_train.csv \
---test-data ../data/wine_test.csv \
---pipeline-path ../results/models/wine_pipeline.pickle \
---table-to ../results/tables \
---plot-to ../results/figures
