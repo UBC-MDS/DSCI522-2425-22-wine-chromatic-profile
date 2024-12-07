@@ -55,13 +55,6 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         'recall': make_scorer(recall_score, pos_label = 'red'),
         'f1': make_scorer(f1_score, pos_label = 'red')
     }
-    cv_df = pd.DataFrame(
-        cross_validate(wine_pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
-    ).agg(['mean', 'std']).round(3).T
-    if not os.path.exists(table_to):
-        os.mkdir(table_to)
-    cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"))
-
     # Hyperparameter Optimization with RandomizedSearchCV via F1 scoring
     param_grid = {
         "logisticregression__C": loguniform(1e-1, 10)
@@ -90,19 +83,31 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
 
     pickle.dump(random_search, open("../results/models/wine_random_search.pickle", "wb"))
 
+    best_estimator = random_search.best_estimator_
+
+    cv_df = pd.DataFrame(
+        cross_validate(best_estimator, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
+    ).agg(['mean', 'std']).round(3).T
+    if not os.path.exists(table_to):
+        os.mkdir(table_to)
+    cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"))
+
     # Results
     # Compute accuracy on test data
-    accuracy = random_search.score(
-        X_test, y_test
-    )
-    # Compute F1 score
-    wine_f1_score = f1_score(
-        y_test, 
-        random_search.predict(X_test), 
-        pos_label = "red"
-    )
 
-    test_scores = pd.DataFrame({'accuracy': [accuracy], 'F1 score': [wine_f1_score]})
+    predictions = best_estimator.predict(X_test)
+    accuracy = best_estimator.score(y_test, predictions)
+    precision = precision_score(y_test, predictions, pos_label="red")
+    recall = recall_score(y_test, predictions, pos_label="red")
+    f1 = f1_score(y_test, predictions, pos_label="red")
+
+    test_scores = pd.DataFrame({
+        'accuracy': [accuracy],
+        'precision': [precision],
+        'recall': [recall],
+        'F1 score': [f1]
+    })
+    
     test_scores.to_csv(os.path.join(table_to, "test_scores.csv"), index=False)
 
     # Confusion matrix 
