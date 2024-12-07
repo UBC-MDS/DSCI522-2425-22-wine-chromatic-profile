@@ -1,5 +1,5 @@
 # model_evaluation_wine_predictor.py
-# author: Daria Khon, Farhan Bin Faisel, Adrian Leung, Zhiwei Zhang
+# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
 import click
@@ -18,6 +18,8 @@ from sklearn.model_selection import (
     RandomizedSearchCV,
 )
 from scipy.stats import loguniform
+from deepchecks.tabular import Dataset
+from deepchecks.tabular.checks import PredictionDrift
 
 @click.command()
 @click.option('--train-data', type=str, help="Path to train data")
@@ -124,6 +126,26 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         name='wine_quality', 
     )
     pr_curve.figure_.savefig(os.path.join(plot_to, "pr_curve.png"))
+
+    # Prediction drift check
+    wine_train_ds = Dataset(wine_train, label="color", cat_features=[])
+    wine_test_ds = Dataset(wine_test, label="color", cat_features=[])
+    target_drift_check = PredictionDrift()
+
+    expected_distribution = {"red": 0.25, "white": 0.75} 
+    actual_distribution = wine_train['color'].value_counts(normalize=True).to_dict()
+
+    for cat, prob in expected_distribution.items():
+        if abs(actual_distribution.get(cat) - prob) > 0.1:
+            print(f"Class '{cat}' deviates significantly from the expected distribution {prob}.")
+
+    target_dist_result = target_drift_check.run(
+        wine_train_ds, 
+        wine_test_ds, 
+        model = random_search.best_estimator_
+    )
+    drift_df =  pd.DataFrame([target_dist_result.reduce_output()])
+    drift_df.to_csv(os.path.join(table_to, "drift_score.csv"))
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,5 @@
-# clean data
-# Authors: Daria Khon, Farhan Bin Faisel, Adrian Leung, Zhiwei Zhang
+# clean_data.py
+# Authors: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
 import click
