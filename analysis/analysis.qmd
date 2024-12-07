@@ -1,7 +1,8 @@
 ---
 title: Wine Chromatic Profile Prediction Project
-author: "Adrian Leung, Daria Khon, Farhan Bin Faisal & Zhiwei Zhang"
-format: 
+author: "Adrian Leung, Daria Khon, Farhan Faisal & Zhiwei Zhang"
+date: "2024/12/07"
+format:
   html:
     toc: true
     toc-depth: 2
@@ -70,43 +71,34 @@ y_test = wine_test["color"]
 best_model_accuracy = random_search.score(X_test, y_test)
 ```
 
-___   
-## SUMMARY   
-___   
+```{python}
+test_results = pd.read_csv("../results/tables/test_scores.csv")
+test_accuracy = round(float(test_results["accuracy"]), 3)
+test_precision = round(float(test_results["precision"]), 3)
+test_recall = round(float(test_results["recall"]), 3)
+test_f1 = round(float(test_results["F1 score"]), 3)
+```
 
-In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on unseen test data. The precision-recall analysis indicated high precision and recall scores, consistently above 0.98, further corroborated by the confusion matrix, which showed minimal misclassifications.
+___   
+## Summary   
+
+In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on unseen test data. The precision-recall analysis indicated high precision and recall scores (above `{python} round(test_recall, 2) - 0.01`), further corroborated by the confusion matrix, which showed minimal misclassifications.
 
 While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.
 
 ___
-## INTRODUCTION  
-___   
+## Introduction  
 
-Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer **whether we accurately predict the color of wine using its physiochemical properties**
+Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer **whether we accurately predict the color of wine using its physiochemical properties**.
 
 Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry's adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.
 
 ___  
-## METHODS
-___
+## Methods
 
 ### Data
 
 The dataset for this project is sourced from the UCI Machine Learning Repository [@dua2017uci] and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.
-
-
-```{python}
-# #| label: tbl-feat-datatypes
-# #| tbl-cap: Feature Datatypes
-# Markdown(info_df.to_markdown())
-```
-
-```{python}
-# #| label: tbl-describe
-# #| tbl-cap: Summary Statistics
-# Markdown(summary_df.to_markdown())
-```
-
 
 ### Validation
 We conducted several validation checks on our dataset, including assessments for duplicates, correct data types, and missing values, most of which passed successfully. However, the outlier check flagged a few variables with potential outliers. To keep the analysis straightforward, we chose not to remove these outliers for this iteration. Future iterations could explore handling these outliers more thoroughly to refine the analysis.
@@ -119,11 +111,11 @@ Preprocessing steps included removing duplicate entries, ordinal encoding for th
 The Python programming language [@python3reference] and the following libraries were utilized for the analysis: NumPy [@harris2020numpy] for numerical computations, Pandas [@mckinney2010pandas] for data manipulation, Altair [@vanderplas2018altair] for visualization, and scikit-learn [@pedregosa2011scikit] for model development and evaluation. The complete analysis code is available on GitHub: <https://github.com/UBC-MDS/DSCI522-2425-22-wine-quality.git>.
 
 ___
-## RESULTS   
-___    
-To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class. While most predictors, including mean and maximum measurements, showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.
+## Results   
 
-We also examined multicollinearity among predictors, initially identifying high correlations between alcohol and quality, as well as total sulfur dioxide and free sulfur dioxide. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.
+To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class (@fig-feat-dist). While most predictors showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.
+
+We also examined multicollinearity among predictors (@fig-feat-cor), initially identifying high correlations between `alcohol and quality`, as well as `total sulfur dioxide and free sulfur dioxide`. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.
 
 ![Distribution of Features per Target Class](../results/figures/feature_densities_by_class.png){#fig-feat-dist}
 
@@ -136,44 +128,40 @@ We also examined multicollinearity among predictors, initially identifying high 
 # Markdown(cross_validation_results.to_markdown())
 ```
 
-We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (`C`), which was found to be `{python} round(best_params, 2)`, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with "red" as the positive class) as our scoring metric.
+We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (`C`), which was found to be `{python} round(best_params, 2)`, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with "red" as the positive class) as our scoring metric. Cross validation results using the best model is shown in  @tbl-random-search.
 
 ```{python}
 #| label: tbl-random-search
-#| tbl-cap: Random Search Results
-Markdown(random_search_results.to_markdown())
+#| tbl-cap: Random Search Best Model Cross-Validation Results
+Markdown(cross_validation_results.to_markdown())
 ```
-
-Prior to judging model performance on the test set, we also validated that the target distributions beterrn out training and tes set were comparable. We ensured this using a prediciton drift check. The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre) 
 
 ```{python}
 target_drift_score = pd.read_csv("../results/tables/drift_score.csv").iloc[0, 0]
 ```
 
-The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Drift Score of `{python} round(target_drift_score, 3)`) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.
+Before evaluating model performance on the test set, we validated that the target distributions between the training and test sets were comparable using a prediction drift check. The validation was successful, with a low Prediction Drift Score of `{python} round(target_drift_score, 3)`, indicating that the model's predictions on both datasets are consistent and align with the expected target distribution.
 
-Finally, we evaluated the model on the test set, generating a confusion matrix and a precision-recall (PR) curve to summarize the results. 
+Finally, we evaluated the model on the test set (@tbl-test-results). We also generated a confusion matrix (@fig-confusion) and a precision-recall (PR) (@fig-pr) curve to summarize the results. 
+
+```{python}
+#| label: tbl-test-results
+#| tbl-cap: Test Set Results
+Markdown(test_results.to_markdown())
+```
 
 ![Confusion Matric](../results/figures/confusion_matrix.png){#fig-confusion}
 
 ![Precision Recall Curve](../results/figures/pr_curve.png){#fig-pr}
 
 ___
-### DISCUSSION
-___
+## Discussion  
 
-The confusion matrix (Figure @fig-confusion) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of 0.994 with a standard deviation of 0.003. The precision-recall (PR) curve (Figure @fig-pr) further demonstrates the model's robust performance across various thresholds, supported by a high test precision of 0.987 ± 0.006 and test recall of 0.991 ± 0.009. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
+The confusion matrix (@fig-confusion) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of `{python} round(test_accuracy, 3)`. The precision-recall (PR) curve (@fig-pr) further demonstrates the model's robust performance across various thresholds (AP = 0.99), supported by a high test precision of `{python} test_precision` and test recall of `{python} test_recall`. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
 
-
-
-From the results above, we see that the logistic regression with balanced class weight performs very well on the test set. in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (>0.994), 
-
- 
-call and precision are higher than 0.98. 
-
-The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding 0.98.  
+The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding `{python} round(test_recall, 2) - 0.01`.  
 
 While these high scores suggest the model is likely to perform well on new data, they also raise concerns about potential overfitting. The model's exceptional performance on both the training and test sets may indicate limited generalizability to truly unseen data, warranting further evaluation to ensure robustness.
 
 ___
-## REFERENCES
+## References

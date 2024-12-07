@@ -6,7 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Adrian Leung, Daria Khon, Farhan Bin Faisal &amp; Zhiwei Zhang">
+<meta name="author" content="Adrian Leung, Daria Khon, Farhan Faisal &amp; Zhiwei Zhang">
+<meta name="dcterms.date" content="2024-12-07">
 
 <title>Wine Chromatic Profile Prediction Project</title>
 <style>
@@ -3074,11 +3075,12 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">SUMMARY</a></li>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">INTRODUCTION</a></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">METHODS</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">RESULTS</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">REFERENCES</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../../../../../analysis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
@@ -3096,10 +3098,16 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Adrian Leung, Daria Khon, Farhan Bin Faisal &amp; Zhiwei Zhang </p>
+             <p>Adrian Leung, Daria Khon, Farhan Faisal &amp; Zhiwei Zhang </p>
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 7, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -3111,22 +3119,19 @@ vertical-align: -.125em;
 
 <hr>
 <section id="summary" class="level2">
-<h2 class="anchored" data-anchor-id="summary">SUMMARY</h2>
-<hr>
-<p>In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of 0.98 on unseen test data. The precision-recall analysis indicated high precision and recall scores, consistently above 0.98, further corroborated by the confusion matrix, which showed minimal misclassifications.</p>
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of 0.98 on unseen test data. The precision-recall analysis indicated high precision and recall scores (above 0.98), further corroborated by the confusion matrix, which showed minimal misclassifications.</p>
 <p>While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.</p>
 <hr>
 </section>
 <section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">INTRODUCTION</h2>
-<hr>
-<p>Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer <strong>whether we accurately predict the color of wine using its physiochemical properties</strong></p>
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer <strong>whether we accurately predict the color of wine using its physiochemical properties</strong>.</p>
 <p>Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry’s adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.</p>
 <hr>
 </section>
 <section id="methods" class="level2">
-<h2 class="anchored" data-anchor-id="methods">METHODS</h2>
-<hr>
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <section id="data" class="level3">
 <h3 class="anchored" data-anchor-id="data">Data</h3>
 <p>The dataset for this project is sourced from the UCI Machine Learning Repository <span class="citation" data-cites="dua2017uci">(<a href="#ref-dua2017uci" role="doc-biblioref">Dua and Graff 2017</a>)</span> and focuses on wines from the Vinho Verde region in Portugal. It includes 11 physiochemical attributes, such as fixed acidity, volatile acidity, pH, and alcohol content, collected from 1,599 red wine samples and 4,898 white wine samples.</p>
@@ -3144,10 +3149,9 @@ vertical-align: -.125em;
 </section>
 </section>
 <section id="results" class="level2">
-<h2 class="anchored" data-anchor-id="results">RESULTS</h2>
-<hr>
-<p>To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class. While most predictors, including mean and maximum measurements, showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.</p>
-<p>We also examined multicollinearity among predictors, initially identifying high correlations between alcohol and quality, as well as total sulfur dioxide and free sulfur dioxide. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.</p>
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class (<a href="#fig-feat-dist" class="quarto-xref">Figure 1</a>). While most predictors showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.</p>
+<p>We also examined multicollinearity among predictors (<a href="#fig-feat-cor" class="quarto-xref">Figure 2</a>), initially identifying high correlations between <code>alcohol and quality</code>, as well as <code>total sulfur dioxide and free sulfur dioxide</code>. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.</p>
 <div id="fig-feat-dist" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-feat-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3168,102 +3172,32 @@ Figure 2: Correlation between Wine Color Prediction Features
 </figcaption>
 </figure>
 </div>
-<p>We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (<code>C</code>), which was found to be 1.27, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with “red” as the positive class) as our scoring metric.</p>
-<div class="cell" data-execution_count="9">
-<div id="tbl-random-search" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
+<p>We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (<code>C</code>), which was found to be 1.27, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with “red” as the positive class) as our scoring metric. Cross validation results using the best model is shown in <a href="#tbl-random-search" class="quarto-xref">Table 1</a>.</p>
+<div class="cell" data-execution_count="8">
+<div id="tbl-random-search" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-random-search-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table 1: Random Search Results
+Table 1: Random Search Best Model Cross-Validation Results
 </figcaption>
 <div aria-describedby="tbl-random-search-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="9">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="8">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 2%">
-<col style="width: 20%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 7%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: right;"></th>
-<th style="text-align: left;">Unnamed: 0</th>
-<th style="text-align: right;">1</th>
-<th style="text-align: right;">1.1</th>
-<th style="text-align: right;">3</th>
-<th style="text-align: right;">4</th>
-<th style="text-align: right;">4.1</th>
-<th style="text-align: right;">6</th>
-<th style="text-align: right;">7</th>
-<th style="text-align: right;">8</th>
-<th style="text-align: right;">9</th>
-<th style="text-align: right;">10</th>
+<th style="text-align: right;">test_accuracy</th>
+<th style="text-align: right;">test_precision</th>
+<th style="text-align: right;">test_recall</th>
+<th style="text-align: right;">test_f1</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">mean_train_score</td>
-<td style="text-align: right;">0.987578</td>
-<td style="text-align: right;">0.987319</td>
-<td style="text-align: right;">0.988732</td>
-<td style="text-align: right;">0.98822</td>
-<td style="text-align: right;">0.988347</td>
-<td style="text-align: right;">0.987057</td>
-<td style="text-align: right;">0.988092</td>
-<td style="text-align: right;">0.987057</td>
-<td style="text-align: right;">0.986418</td>
-<td style="text-align: right;">0.986164</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">mean_test_score</td>
-<td style="text-align: right;">0.988593</td>
-<td style="text-align: right;">0.988593</td>
-<td style="text-align: right;">0.988582</td>
-<td style="text-align: right;">0.988577</td>
-<td style="text-align: right;">0.988577</td>
-<td style="text-align: right;">0.988068</td>
-<td style="text-align: right;">0.988065</td>
-<td style="text-align: right;">0.987032</td>
-<td style="text-align: right;">0.985503</td>
-<td style="text-align: right;">0.98448</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">param_logisticregression__C</td>
-<td style="text-align: right;">1.26657</td>
-<td style="text-align: right;">0.915933</td>
-<td style="text-align: right;">9.15226</td>
-<td style="text-align: right;">2.47137</td>
-<td style="text-align: right;">2.7475</td>
-<td style="text-align: right;">0.701799</td>
-<td style="text-align: right;">2.34239</td>
-<td style="text-align: right;">0.608464</td>
-<td style="text-align: right;">0.37349</td>
-<td style="text-align: right;">0.284252</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">mean_fit_time</td>
-<td style="text-align: right;">0.0351778</td>
-<td style="text-align: right;">0.0266201</td>
-<td style="text-align: right;">0.0293894</td>
-<td style="text-align: right;">0.0385138</td>
-<td style="text-align: right;">0.0333096</td>
-<td style="text-align: right;">0.028475</td>
-<td style="text-align: right;">0.0301148</td>
-<td style="text-align: right;">0.02707</td>
-<td style="text-align: right;">0.0324777</td>
-<td style="text-align: right;">0.0267522</td>
+<td style="text-align: right;">0.994</td>
+<td style="text-align: right;">0.987</td>
+<td style="text-align: right;">0.991</td>
+<td style="text-align: right;">0.989</td>
 </tr>
 </tbody>
 </table>
@@ -3272,9 +3206,41 @@ Table 1: Random Search Results
 </figure>
 </div>
 </div>
-<p>Prior to judging model performance on the test set, we also validated that the target distributions beterrn out training and tes set were comparable. We ensured this using a prediciton drift check. The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Dirift Socre)</p>
-<p>The validation check is successful, and we can see that the model’s predictions on the training and testing datasets are consistent (as per low Prediction Drift Score of 0) and align with the expected target distribution. The actual and predicted target class distributions match the expected proportions, ensuring that the dataset retains its intended balance of classes.</p>
-<p>Finally, we evaluated the model on the test set, generating a confusion matrix and a precision-recall (PR) curve to summarize the results.</p>
+<p>Before evaluating model performance on the test set, we validated that the target distributions between the training and test sets were comparable using a prediction drift check. The validation was successful, with a low Prediction Drift Score of 0, indicating that the model’s predictions on both datasets are consistent and align with the expected target distribution.</p>
+<p>Finally, we evaluated the model on the test set (<a href="#tbl-test-results" class="quarto-xref">Table 2</a>). We also generated a confusion matrix (<a href="#fig-confusion" class="quarto-xref">Figure 3</a>) and a precision-recall (PR) (<a href="#fig-pr" class="quarto-xref">Figure 4</a>) curve to summarize the results.</p>
+<div class="cell" data-execution_count="10">
+<div id="tbl-test-results" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-test-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 2: Test Set Results
+</figcaption>
+<div aria-describedby="tbl-test-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="10">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: right;">accuracy</th>
+<th style="text-align: right;">precision</th>
+<th style="text-align: right;">recall</th>
+<th style="text-align: right;">F1 score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.991228</td>
+<td style="text-align: right;">0.9775</td>
+<td style="text-align: right;">0.987374</td>
+<td style="text-align: right;">0.982412</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
 <div id="fig-confusion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3296,23 +3262,20 @@ Figure 4: Precision Recall Curve
 </figure>
 </div>
 <hr>
-<section id="discussion" class="level3">
-<h3 class="anchored" data-anchor-id="discussion">DISCUSSION</h3>
-<hr>
-<p>The confusion matrix (Figure <a href="#fig-confusion" class="quarto-xref">Figure 3</a>) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of 0.994 with a standard deviation of 0.003. The precision-recall (PR) curve (Figure <a href="#fig-pr" class="quarto-xref">Figure 4</a>) further demonstrates the model’s robust performance across various thresholds, supported by a high test precision of 0.987 ± 0.006 and test recall of 0.991 ± 0.009. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.</p>
-<p>From the results above, we see that the logistic regression with balanced class weight performs very well on the test set. in the validation set as it scores more than 0.98 for all metrics, showing both a high performance in accuracy and much less classification bias due to very high recall and precision scores. Since the validation accuracy score is very high (&gt;0.994),</p>
-<p>call and precision are higher than 0.98.</p>
+</section>
+<section id="discussion" class="level2">
+<h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
+<p>The confusion matrix (<a href="#fig-confusion" class="quarto-xref">Figure 3</a>) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of 0.991. The precision-recall (PR) curve (<a href="#fig-pr" class="quarto-xref">Figure 4</a>) further demonstrates the model’s robust performance across various thresholds (AP = 0.99), supported by a high test precision of 0.978 and test recall of 0.987. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.</p>
 <p>The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding 0.98.</p>
 <p>While these high scores suggest the model is likely to perform well on new data, they also raise concerns about potential overfitting. The model’s exceptional performance on both the training and test sets may indicate limited generalizability to truly unseen data, warranting further evaluation to ensure robustness.</p>
 <hr>
-</section>
 </section>
 <section id="references" class="level2 unnumbered">
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">REFERENCES</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-dua2017uci" class="csl-entry" role="listitem">
 Dua, Dheeru, and Casey Graff. 2017. <span>“UCI Machine Learning Repository.”</span> University of California, Irvine, School of Information; Computer Sciences.
 </div>
