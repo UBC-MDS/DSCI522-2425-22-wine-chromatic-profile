@@ -36,7 +36,7 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
       --id 186 \
       --save_to ../data/wine.csv
 
-   python scripts/clean_data.py \
+   python scripts/clean_n_split_data.py \
       --raw-data ../data/wine.csv
    
    python scripts/validation_before_split.py \
@@ -47,26 +47,26 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 4.2 Run EDA
 ```
    python scripts/eda_n_correlation_check.py \
-      --train-file ../data/wine_train.csv \
+      --train-file ./data/wine_train.csv \
       --output-img ../results/figures \
       --output-table ../results/tables
 ```
 4.3 Preprocess data and run it through the Logistic Regression model:
 ```
-   python preprocessing.py \
-      --pipe-to ../results/models
+   python scripts/preprocessing.py \
+      --pipe-to ./results/models
 
-   python model_evaluation_wine_predictor.py \
-      --train-data ../data/wine_train.csv \
-      --test-data ../data/wine_test.csv \
-      --pipeline-path ../results/models/wine_pipeline.pickle \
-      --table-to ../results/table \
-      --plot-to ../results/figures
+   python scripts/model_evaluation_wine_predictor.py \
+      --train-data ./data/wine_train.csv \
+      --test-data ./data/wine_test.csv \
+      --pipeline-path ./results/models/wine_pipeline.pickle \
+      --table-to ./results/tables \
+      --plot-to ./results/figures
 ```
 4.4 Generate a Quarto report .html and/or .pdf:
 ```
-   quarto render reports/report.qmd --to html
-   quarto render reports/report.qmd --to pdf
+   quarto render report/report.qmd --to html
+   quarto render report/report.qmd --to pdf
 ```
 
 ### Clean up
