@@ -4,7 +4,7 @@ Authors: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 DSCI 522 (Data Science Workflows) Project
 
 # About
-Here we attempt to build a classification model to predict the class of wine (red or white) based on the physiochemical properties (e.g. acidity, sulphates, citric acid, etc.). We used logistic regression model for our predictions, with our classifier performing well on unseen data with 0.99 test score, misclassifying 15 out 1950 instances.
+In this project we created a classification model to predict the type of wine (red or white) based on its physicochemical properties, such as acidity, sulfates, citric acid, etc. The logistic regression model was selected for its simplicity and effectiveness in binary classification tasks. Our classifier demonstrated excellent performance on unseen data, achieving test accuracy of 0.99. Out of 1,950 instances, only 15 were misclassified, showcasing the model's reliability and its potential for practical applications in wine quality assessment and categorization.
 <br> <br>
 The data set we used in this project was created by By P. Cortez, A. Cerdeira, Fernando Almeida, Telmo Matos, J. Reis. 2009 as part of Decision Support Systems publication, and is available on UCI Machine Learning Repository [here](https://archive.ics.uci.edu/dataset/186/wine+quality). 
 
@@ -12,7 +12,7 @@ The data set we used in this project was created by By P. Cortez, A. Cerdeira, F
 The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-wine-chromatic-profile/).
 
 # Dependencies
-- [Docke](https://www.docker.com/)
+- [Docker](https://www.docker.com/)
 - [Jupyter Lab](https://jupyter.org/)
 - or [VS CODE with Jupyter Extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 
@@ -29,7 +29,45 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 3. In the terminal, look for a URL that starts with http://127.0.0.1:8888/lab?token= (see sample terminal output below). Copy and paste that URL into your browser.
 <img src="img/docker_instructions.png" width=600>
 
-4. Run analysis by opening `analysis/analysis.ipynb` and under the "Kernel" menu click "Restart Kernel and Run All Cells...".
+4. Once in a docker container, open a terminal and run the following commands in sequence: <br>
+4.1 Download, clean, split and validate the data:
+```
+   python scripts/download.py \
+      --id 186 \
+      --save_to ../data/wine.csv
+
+   python scripts/clean_data.py \
+      --raw-data ../data/wine.csv
+   
+   python scripts/validation_before_split.py \
+      --file_name wine.csv \
+      --data_path ../data/
+
+```
+4.2 Run EDA
+```
+   python scripts/eda_n_correlation_check.py \
+      --train-file ../data/wine_train.csv \
+      --output-img ../results/figures \
+      --output-table ../results/tables
+```
+4.3 Preprocess data and run it through the Logistic Regression model:
+```
+   python preprocessing.py \
+      --pipe-to ../results/models
+
+   python model_evaluation_wine_predictor.py \
+      --train-data ../data/wine_train.csv \
+      --test-data ../data/wine_test.csv \
+      --pipeline-path ../results/models/wine_pipeline.pickle \
+      --table-to ../results/table \
+      --plot-to ../results/figures
+```
+4.4 Generate a Quarto report .html and/or .pdf:
+```
+   quarto render reports/report.qmd --to html
+   quarto render reports/report.qmd --to pdf
+```
 
 ### Clean up
 
