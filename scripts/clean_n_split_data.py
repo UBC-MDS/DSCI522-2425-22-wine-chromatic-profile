@@ -1,4 +1,4 @@
-# clean_n_split_data.py
+# clean_data.py
 # Authors: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-05
 
