@@ -29,8 +29,45 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 3. In the terminal, look for a URL that starts with http://127.0.0.1:8888/lab?token= (see sample terminal output below). Copy and paste that URL into your browser.
 <img src="img/docker_instructions.png" width=600>
 
-4. Run analysis by opening `analysis/analysis.ipynb` and under the "Kernel" menu click "Restart Kernel and Run All Cells...".
+4. Once in a docker container, open a terminal and run the following commands in sequence: <br>
+4.1 Download, clean, split and validate the data:
+```
+   python scripts/download.py \
+      --id 186 \
+      --save_to ../data/wine.csv
 
+   python scripts/clean_data.py \
+      --raw-data ../data/wine
+   
+   python scripts/validation_before_split.py \
+      ---file_name \
+      --data_path
+
+```
+4.2 Run EDA
+```
+   python scripts/eda_n_correlation_check.py \
+      --train-file ../data/wine_train.csv \
+      --output-img ../results/figures \
+      --output-table ../results/tables
+```
+4.3 Preprocess data and run it through the Logistic Regression model:
+```
+   python preprocessing.py \
+      --pipe-to ../results/models
+
+   python model_evaluation_wine_predictor.py \
+      --train-data ../data/wine_train.csv \
+      --test-data ../data/wine_test.csv \
+      --pipeline-path ../results/models/wine_pipeline.pickle \
+      --table-to ../results/table \
+      --plot-to ../results/figures
+```
+4.4 Generate a Quarto report .html and/or .pdf:
+```
+   quarto render reports/report.qmd --to html
+   quarto render reports/report.qmd --to pdf
+```
 ### Clean up
 
 To shut down the container and clean up the resources, 
