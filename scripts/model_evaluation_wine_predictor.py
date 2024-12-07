@@ -1,5 +1,5 @@
 # model_evaluation_wine_predictor.py
-# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
+# author: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
 # date: 2024-12-05
 
 import click
@@ -8,12 +8,13 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn import set_config
-from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import (
     ConfusionMatrixDisplay, PrecisionRecallDisplay, 
-    make_scorer, recall_score, precision_score, f1_score
+    make_scorer, recall_score, precision_score, f1_score, 
+    accuracy_score
 )
+
 from sklearn.model_selection import (
     cross_validate,
     RandomizedSearchCV,
@@ -56,17 +57,12 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         'recall': make_scorer(recall_score, pos_label = 'red'),
         'f1': make_scorer(f1_score, pos_label = 'red')
     }
-    cv_df = pd.DataFrame(
-        cross_validate(wine_pipe, X_train, y_train, return_train_score = True, cv = 5, scoring = scoring)
-    ).agg(['mean', 'std']).round(3).T
-    if not os.path.exists(table_to):
-        os.mkdir(table_to)
-    cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"))
 
     # Hyperparameter Optimization with RandomizedSearchCV via F1 scoring
     param_grid = {
         "logisticregression__C": loguniform(1e-1, 10)
     }
+
     random_search = RandomizedSearchCV(
         wine_pipe,
         param_grid,
@@ -89,19 +85,36 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     ].set_index("rank_test_score").sort_index().T
     random_search_df.to_csv(os.path.join(table_to, "random_search.csv"))
 
+    pickle.dump(random_search, open("../results/models/wine_random_search.pickle", "wb"))
+
+    best_estimator = random_search.best_estimator_
+
+    cv_df = pd.DataFrame(
+        cross_validate(best_estimator, X_train, y_train, cv = 5, scoring = scoring)
+    ).agg(['mean']).round(3).T.reset_index()
+
+    cv_df = cv_df[~cv_df['index'].isin(["fit_time", "score_time"])]
+    cv_df = cv_df.set_index('index').T
+
+    if not os.path.exists(table_to):
+        os.mkdir(table_to)
+    cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"), index=False)
+
     # Results
     # Compute accuracy on test data
-    accuracy = random_search.score(
-        X_test, y_test
-    )
-    # Compute F1 score
-    wine_f1_score = f1_score(
-        y_test, 
-        random_search.predict(X_test), 
-        pos_label = "red"
-    )
+    predictions = best_estimator.predict(X_test)
+    accuracy = accuracy_score(y_test, predictions)
+    precision = precision_score(y_test, predictions, pos_label="red")
+    recall = recall_score(y_test, predictions, pos_label="red")
+    f1 = f1_score(y_test, predictions, pos_label="red")
 
-    test_scores = pd.DataFrame({'accuracy': [accuracy], 'F1 score': [wine_f1_score]})
+    test_scores = pd.DataFrame({
+        'accuracy': [accuracy],
+        'precision': [precision],
+        'recall': [recall],
+        'F1 score': [f1]
+    })
+
     test_scores.to_csv(os.path.join(table_to, "test_scores.csv"), index=False)
 
     # Confusion matrix 
@@ -111,6 +124,7 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         y_test,
         values_format="d"
     )
+
     if not os.path.exists(plot_to):
         os.mkdir(plot_to)
     confusion_matrix.figure_.savefig(os.path.join(plot_to, "confusion_matrix.png"))

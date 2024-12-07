@@ -1,5 +1,5 @@
 # validation_before_split.py
-# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
+# author: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
 # date: 2024-12-05
 
 import os
@@ -9,6 +9,7 @@ import pandera as pa
 
 # Define schemas for validation
 def define_schemas():
+    # Checking for missingness
     base_checks = [pa.Check(lambda s: s.isna().mean() <= 0.05, element_wise=False, error="Too many null values.")]
     
     general_schema = pa.DataFrameSchema({
@@ -55,7 +56,6 @@ def define_schemas():
                 pa.Check(lambda df: ~(df.isna().all(axis=1)).any(), error="Empty rows found.")
     ])
 
-
     return general_schema, outlier_schema, category_schema, duplicate_check, empty_row_check
 
 
@@ -81,7 +81,7 @@ def validate_column_names(wine, correct_columns):
 def main(file_name, data_path):
     path = os.path.join(data_path, file_name)
     
-    # Validate file existence and format
+    # 1. Validate file existence and format
     if not os.path.exists(path):
         raise FileNotFoundError(f"{file_name} does not exist inside the {data_path} directory")
     if not path.endswith('.csv'):
@@ -98,12 +98,13 @@ def main(file_name, data_path):
         'alcohol', 'quality', 'color'
     }
     
-    # Validate column names
+    # 2. Validate column names
     validate_column_names(wine, correct_columns)
     
     # Load schemas
     general_schema, outlier_schema, category_schema, duplicate_check, empty_row_check = define_schemas()
 
+    # 3, 4 General validation #Missingness check
     # General validation (Colum type check & Missingness check)
     try:
         general_schema.validate(wine, lazy=True)
@@ -111,6 +112,7 @@ def main(file_name, data_path):
     except pa.errors.SchemaErrors as e:
         print("General validation failed:", e)
 
+    # 5.Category validation # Checking correct column types
     # Empty row validation
     try:
         empty_row_check.validate(wine, lazy=True)
@@ -134,7 +136,7 @@ def main(file_name, data_path):
     except pa.errors.SchemaErrors as e:
         print("Category validation failed:", e)
 
-    # Duplicate row validation
+    # 6. Duplicate row validation
     try:
         duplicate_check.validate(wine, lazy=True)
         print("Duplicate check passed!")
@@ -142,6 +144,13 @@ def main(file_name, data_path):
         print("Duplicate check failed:")
         print(pd.DataFrame(e.failure_cases).to_string())
 
+    # 7. Outlier validation
+    try:
+        outlier_schema.validate(wine, lazy=True)
+        print("Outlier validation passed!")
+    except pa.errors.SchemaErrors as e:
+        print("Outlier validation failed:")
+        print(pd.DataFrame(e.failure_cases).to_string())
 
 if __name__ == "__main__":
     main()

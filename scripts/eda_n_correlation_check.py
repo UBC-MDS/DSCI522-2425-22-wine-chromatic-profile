@@ -1,5 +1,5 @@
 # eda_n_correlation_check.py
-# author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
+# author: Adrian Leung, Daria Khon, Farhan Bin Faisal, Zhiwei Zhang
 # date: 2024-12-05
 
 import os
@@ -28,7 +28,12 @@ def main(train_file, output_img, output_table):
 
     # Save feature datatypes and summary statistics
     datatype_path = os.path.join(output_table, "feature_datatypes.csv")
-    train_df.info(buf=open(datatype_path, 'w'))
+    info_df = pd.DataFrame({
+        "Column": train_df.columns,
+        "Non-Null Count": [train_df[col].notnull().sum() for col in train_df.columns],
+        "Data Type": [train_df[col].dtype for col in train_df.columns]
+    })
+    info_df.to_csv(datatype_path, index=False)
     print(f"Feature datatypes saved at: {datatype_path}")
 
     summary_path = os.path.join(output_table, "summary_statistics.csv")
