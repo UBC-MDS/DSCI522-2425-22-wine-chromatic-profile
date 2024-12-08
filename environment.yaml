@@ -18,7 +18,7 @@ dependencies:
   - vega_datasets=0.9.0
   - vegafusion=1.6.9
   - vegafusion-jupyter=1.4.3
-  - vegafusion-python-embed=1.4.3
+  - vegafusion-python-embed=1.6.9
   - notebook=6.5.4
   - jupyter_contrib_nbextensions=0.7.0
   - quarto=1.5.57
