@@ -1,6 +1,6 @@
 ---
 title: Wine Chromatic Profile Prediction Project
-author: "Farhan Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang"
+author: "Adrian Leung, Daria Khon, Farhan Faisal & Zhiwei Zhang"
 date: "2024/12/07"
 format:
   html:
