@@ -34,22 +34,22 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 ```
    python scripts/download.py \
       --id 186 \
-      --save_to ../data/wine.csv
+      --save_to ./data/wine.csv
 
    python scripts/clean_n_split_data.py \
-      --raw-data ../data/wine.csv
+      --raw-data ./data/wine.csv
    
    python scripts/validation_before_split.py \
       --file_name wine.csv \
-      --data_path ../data/
+      --data_path ./data/
 
 ```
 4.2 Run EDA
 ```
    python scripts/eda_n_correlation_check.py \
       --train-file ./data/wine_train.csv \
-      --output-img ../results/figures \
-      --output-table ../results/tables
+      --output-img ./results/figures \
+      --output-table ./results/tables
 ```
 4.3 Preprocess data and run it through the Logistic Regression model:
 ```
