@@ -45,7 +45,7 @@ def main(train_file, output_img, output_table):
 
     # Figure 1: Distribution of Features per Target Class
     dist_plot = aly.dist(train_df, color = "color").properties(
-        title="Distribution of Features per Target Class"
+        title=""
     )
     dist_plot_path = os.path.join(output_img, "feature_densities_by_class.png")
     dist_plot.save(dist_plot_path, scale_factor=2.0)
@@ -54,7 +54,7 @@ def main(train_file, output_img, output_table):
     # Figure 2: Correlation between Features
     corr_matrix = train_df.drop(columns=['color']).corr()
     corr_plot = aly.corr(corr_matrix).properties(
-        title="Correlation between Wine Color Prediction Features"
+        title=""
     )
     corr_plot_path = os.path.join(output_img, "feature_correlation.png")
     corr_plot.save(corr_plot_path, scale_factor=2.0)
