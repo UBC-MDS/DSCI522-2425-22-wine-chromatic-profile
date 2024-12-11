@@ -34,7 +34,7 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
    make clean
    make all
    ```
-5. Clean up/ Start fresh
+5. To clean up and start fresh at any point, run:
    ```
    make clean
    ```
