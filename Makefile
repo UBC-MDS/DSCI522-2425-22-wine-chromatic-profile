@@ -86,7 +86,7 @@ clean-data :
 	rm -f data/proc/*
 
 clean-markers :
-	rm -f results/markers/*
+	rm -f results/markers/.*
 
 clean : clean-data clean-tables clean-figures clean-models clean-markers
 	rm -f report/report.html
