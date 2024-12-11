@@ -43,8 +43,8 @@ def main(raw_data):
     )
     path = Path(__file__).parent
  
-    train_df.to_csv(path/ "../data/wine_train.csv", index = False)
-    test_df.to_csv(path/ "../data/wine_test.csv", index = False)
+    train_df.to_csv(path/ "../data/proc/wine_train.csv", index = False)
+    test_df.to_csv(path/ "../data/proc/wine_test.csv", index = False)
     
 if __name__ == '__main__':
     main()

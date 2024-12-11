@@ -29,7 +29,7 @@
         "  warning: false\n",
         "---"
       ],
-      "id": "070972cc"
+      "id": "083332ee"
     },
     {
       "cell_type": "code",
@@ -41,7 +41,7 @@
         "from tabulate import tabulate\n",
         "from IPython.display import Markdown, display"
       ],
-      "id": "bdcbc4db",
+      "id": "40cb3acd",
       "execution_count": null,
       "outputs": []
     },
@@ -53,7 +53,7 @@
         "wine_train = pd.read_csv(\"../data/wine_train.csv\")\n",
         "wine_test = pd.read_csv(\"../data/wine_test.csv\")"
       ],
-      "id": "0a6c359f",
+      "id": "6e32260d",
       "execution_count": null,
       "outputs": []
     },
@@ -65,7 +65,7 @@
         "\n",
         "summary_df = pd.read_csv(\"../results/tables/summary_statistics.csv\")"
       ],
-      "id": "fd900cd5",
+      "id": "c42039e2",
       "execution_count": null,
       "outputs": []
     },
@@ -89,7 +89,7 @@
         "\n",
         "best_params = random_search.best_params_[\"logisticregression__C\"]"
       ],
-      "id": "a3481bb6",
+      "id": "49ed3ebe",
       "execution_count": null,
       "outputs": []
     },
@@ -101,7 +101,7 @@
         "y_test = wine_test[\"color\"]\n",
         "best_model_accuracy = random_search.score(X_test, y_test)"
       ],
-      "id": "2cc8369d",
+      "id": "5dd57ed2",
       "execution_count": null,
       "outputs": []
     },
@@ -115,7 +115,7 @@
         "test_recall = round(float(test_results[\"recall\"]), 3)\n",
         "test_f1 = round(float(test_results[\"F1 score\"]), 3)"
       ],
-      "id": "9b388194",
+      "id": "b0ea2958",
       "execution_count": null,
       "outputs": []
     },
@@ -165,7 +165,7 @@
         "\n",
         "![Correlation between Wine Color Prediction Features](../results/figures/feature_correlation.png){#fig-feat-cor}\n"
       ],
-      "id": "d1f31b07"
+      "id": "104b4d83"
     },
     {
       "cell_type": "code",
@@ -175,7 +175,7 @@
         "# #| tbl-cap: Cross Validation Results\n",
         "# Markdown(cross_validation_results.to_markdown())"
       ],
-      "id": "c8ab47bb",
+      "id": "66ec09a9",
       "execution_count": null,
       "outputs": []
     },
@@ -185,7 +185,7 @@
       "source": [
         "We employed a logistic regression model for our classification task, utilizing randomized search with 10 iterations for hyperparameter optimization. The primary goal was to determine the best regularization parameter (`C`), which was found to be `{python} round(best_params, 2)`, to maximize predictive performance. To evaluate model performance during the search, we used the F1 score (with \"red\" as the positive class) as our scoring metric. Cross validation results using the best model is shown in  @tbl-random-search.\n"
       ],
-      "id": "7a0f7f7f"
+      "id": "e4333393"
     },
     {
       "cell_type": "code",
@@ -205,7 +205,7 @@
       "source": [
         "target_drift_score = pd.read_csv(\"../results/tables/drift_score.csv\").iloc[0, 0]"
       ],
-      "id": "789c7443",
+      "id": "88fae5d8",
       "execution_count": null,
       "outputs": []
     },
@@ -217,7 +217,7 @@
         "\n",
         "Finally, we evaluated the model on the test set (@tbl-test-results). We also generated a confusion matrix (@fig-confusion) and a precision-recall (PR) (@fig-pr) curve to summarize the results. \n"
       ],
-      "id": "367cbfd3"
+      "id": "211154ca"
     },
     {
       "cell_type": "code",
@@ -251,7 +251,7 @@
         "___\n",
         "## References"
       ],
-      "id": "a75c1da0"
+      "id": "613a78a5"
     }
   ],
   "metadata": {
@@ -259,7 +259,7 @@
       "name": "python3",
       "language": "python",
       "display_name": "Python 3 (ipykernel)",
-      "path": "/Users/farhan/miniforge3/share/jupyter/kernels/python3"
+      "path": "/Users/farhan/miniforge3/envs/wine/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,
