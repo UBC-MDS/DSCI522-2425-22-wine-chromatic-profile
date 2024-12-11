@@ -17,11 +17,23 @@ SC_MOD = scripts/preprocessing.py
 SC_EVAL = scripts/model_evaluation_wine_predictor.py
 
 ## MARKERS
-SPLIT = results/markers/.split_done
+SPLIT = data/proc/wine_train.csv data/proc/wine_test.csv
 VALIDATE = results/markers/.validate_done
-EDA = results/markers/.EDA_done
-MODEL = results/markers/.model_done
-EVAL = results/markers/.eval_done
+EDA = \
+	results/tables/feature_datatypes.csv \
+	results/tables/summary_statistics.csv  \
+	results/figures/feature_correlation.png \
+	results/figures/feature_densities_by_class.png
+
+MODEL = results/models/wine_pipeline.pickle
+EVAL = \
+	results/models/wine_random_search.pickle \
+	results/tables/cross_validation.csv \
+	results/tables/drift_score.csv \
+	results/tables/random_search.csv \
+	results/tables/test_scores.csv \
+	results/figures/confusion_matrix.png \
+	results/figures/pr_curve.png
 
 ## INTERPRETER
 P = python
@@ -32,28 +44,20 @@ all: quarto
 ./data/raw/wine.csv: ${SC_DOWN}
 	${P} ${SC_DOWN} --id 186 --save_to ./data/raw/wine.csv
 
-
 ${SPLIT}: ${SC_CLEAN} data/raw/wine.csv
 	${P} ${SC_CLEAN} --raw-data ./data/raw/wine.csv
-	touch ${SPLIT}
    
-
 ${VALIDATE}: ${SC_VAL} data/raw/wine.csv
 	${P} ${SC_VAL} --file_name wine.csv --data_path ./data/raw
 	touch ${VALIDATE}
-
 
 ${EDA}: ${SC_EDA} ${VALIDATE} ${SPLIT}
 	${P} ${SC_EDA} \
     --train-file ./data/proc/wine_train.csv \
     --output-img ./results/figures --output-table ./results/tables
-	touch ${EDA}
 
-
-${MODEL}: ${SC_MOD} ${EDA}
+${MODEL}: ${SC_MOD} ${SPLIT}
 	${P} ${SC_MOD} --pipe-to ./results/models
-	touch ${MODEL}
-
 
 ${EVAL}: ${SC_EVAL} ${MODEL}
 	${P} ${SC_EVAL} \
@@ -61,10 +65,8 @@ ${EVAL}: ${SC_EVAL} ${MODEL}
 	--pipeline-path ./results/models/wine_pipeline.pickle \
 	--table-to ./results/tables \
 	--plot-to ./results/figures
-	touch ${EVAL}
 
-
-quarto: report/report.qmd ${EVAL}
+quarto: report/report.qmd ${EDA} ${EVAL}
 	quarto render report/report.qmd --to html
 	quarto render report/report.qmd --to pdf
 	cp report/* docs/
@@ -86,12 +88,12 @@ clean-data :
 	rm -f data/proc/*
 
 clean-markers :
-	rm -f results/markers/.*
+	rm -f ${VALIDATE}
 
 clean : clean-data clean-tables clean-figures clean-models clean-markers
 	rm -f report/report.html
 	rm -f report/report.pdf
-	rm -f docs/index.html
+	rm -f docs/*
 
 
 .PHONY: \
