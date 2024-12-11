@@ -31,6 +31,7 @@ The final report can be found [here](https://ubc-mds.github.io/DSCI522-2425-22-w
 
 4. Once in a docker container, open a terminal and run:
    ```
+   make clean
    make all
    ```
 5. Clean up/ Start fresh
