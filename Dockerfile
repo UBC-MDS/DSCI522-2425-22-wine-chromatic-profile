@@ -8,9 +8,6 @@ USER root
 RUN sudo apt update \
     && sudo apt install -y lmodern
 
-RUN sudo apt-get update \
-    && sudo apt-get install -y make
-
 USER $NB_UID
 
 RUN mamba update --quiet --file /tmp/conda-linux-64.lock \
