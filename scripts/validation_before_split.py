@@ -6,6 +6,9 @@ import os
 import click
 import pandas as pd
 import pandera as pa
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.validate_column_names import validate_column_names
 
 # Define schemas for validation
 def define_schemas():
@@ -53,21 +56,6 @@ def define_schemas():
 
     return general_schema, outlier_schema, category_schema, duplicate_check
 
-
-# Validate column names
-def validate_column_names(wine, correct_columns):
-    extracted_columns = set(wine.columns)
-    if extracted_columns != correct_columns:
-        wrong_columns = extracted_columns.difference(correct_columns)
-        missing_columns = correct_columns.difference(extracted_columns)
-        if wrong_columns and missing_columns:
-            raise ValueError(f"Unexpected columns: {list(wrong_columns)}, missing columns: {list(missing_columns)}")
-        elif wrong_columns:
-            raise ValueError(f"Unexpected columns: {list(wrong_columns)}")
-        elif missing_columns:
-            raise ValueError(f"Missing columns: {list(missing_columns)}")
-    else:
-        print("Column name test passed!")
 
 @click.command()
 @click.option("--file_name", required=True, help="Name of the input CSV file.")
