@@ -59,11 +59,9 @@ def test_model_saving(setup_data, tmp_path):
     """Test that the model is saved correctly."""
     wine_pipe, X_train, y_train, _, _ = setup_data
 
-    # Temporary path for saving the model
     output_path = tmp_path / "wine_random_search.pickle"
 
-    # Call the function
-    _, best_estimator = perform_random_search(
+    _, _ = perform_random_search(
         wine_pipe, X_train, y_train, seed=42, output_path=output_path
     )
 
