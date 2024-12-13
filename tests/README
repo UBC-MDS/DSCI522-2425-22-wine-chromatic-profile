@@ -1,0 +1,5 @@
+# Random Search Test
+pytest -v test_random_search.py \
+    --train_data=../data/proc/wine_train.csv \
+    --test_data=../data/proc/wine_test.csv \
+    --pipeline_path=../results/models/wine_pipeline.pickle
