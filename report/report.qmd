@@ -160,7 +160,9 @@ Markdown(test_results.to_markdown())
 ___
 ## Discussion  
 
-The confusion matrix (@fig-confusion) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of `{python} round(test_accuracy, 3)`. The precision-recall (PR) curve (@fig-pr) further demonstrates the model's robust performance across various thresholds (AP = 0.99), supported by a high test precision of `{python} test_precision` and test recall of `{python} test_recall`. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
+Based on the information from (@fig-confusion) and (@fig-pr), the added insights include that the model achieves excellent classification performance for wine color prediction. From the confusion matrix (@fig-confusion), it is evident that the number of false positives (predicted red but actually white) and false negatives (predicted white but actually red) is minimal. The test accuracy reaches an impressive `{python} round(test_accuracy, 3)`, demonstrating that the model performs reliably in distinguishing wine types.
+
+The precision-recall (PR) curve (@fig-pr) further demonstrates the model's robust performance across various thresholds (AP = 0.99), supported by a high test precision of `{python} test_precision` and test recall of `{python} test_recall`. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
 
 The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding `{python} round(test_recall, 2) - 0.01`.  
 
