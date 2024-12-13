@@ -4,7 +4,7 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 from sklearn import set_config
 
-def clean_n_split(raw_data_path, test_size=0.3, random_state=123):
+def clean_n_split(raw_data_path, output_dir=None, test_size=0.3, random_state=123):
     """
     Cleans raw data and splits it into test and train sets, 
     which are put into data/proc/ directory
@@ -37,11 +37,11 @@ def clean_n_split(raw_data_path, test_size=0.3, random_state=123):
         shuffle=True, 
         random_state=random_state
     )
-    
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_dir = os.path.join(os.path.dirname(script_dir), "data/proc")
+    if output_dir is None:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(os.path.dirname(script_dir), "data/proc")
 
-    train_df.to_csv(output_dir + "/wine_train.csv", index=False)
-    test_df.to_csv(output_dir + "/wine_test.csv", index=False)
+    train_df.to_csv(os.path.join(output_dir, "wine_train.csv"), index=False)
+    test_df.to_csv(os.path.join(output_dir, "wine_test.csv"), index=False)
     
 
