@@ -7,4 +7,4 @@ pytest test_validate_column_names.py
 
 pytest test_split_data.py
 
-pytest test_test_evaluation.py
+pytest test_evaluation.py
