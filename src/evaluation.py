@@ -1,4 +1,4 @@
-# test_evaluation.py
+# evaluation.py
 # author: Farhan Bin Faisal, Daria Khon, Adrian Leung, Zhiwei Zhang
 # date: 2024-12-12
 
@@ -10,7 +10,7 @@ from sklearn.metrics import (
     recall_score, precision_score, f1_score, accuracy_score
 )
 
-def test_evaluation(model, X_test, y_test, pos_label, plot_to, table_to):
+def evaluation(model, X_test, y_test, pos_label, table_to, plot_to):
     """
     This function performs evaluation on the test dataset including evaluating test score on 
     recall, precision, f-1, and accuracy metrics,
@@ -22,14 +22,14 @@ def test_evaluation(model, X_test, y_test, pos_label, plot_to, table_to):
         X_test (pd.DataFrame): The dataframe that contains the features of the test data.
         y_test (pd.Series): The series that contains the targets of the test data.
         pos_label (str): The positive label of the classification problem.
-        plot_to (str): The relative path to save the plots to.
         table_to (str): The relative path to save the tables to.
+        plot_to (str): The relative path to save the plots to.
 
     Returns:
-        None
+        None: This function is not returning anything as it only does side-effects
     
     Examples:
-        test_evalutation(random_search, X_test, y_test, 'red', 'results/tables', 'results/plots')
+        evalutation(random_search, X_test, y_test, 'red', 'results/tables', 'results/plots')
     """
     # Compute accuracy on test data
     predictions = model.predict(X_test)
@@ -44,9 +44,6 @@ def test_evaluation(model, X_test, y_test, pos_label, plot_to, table_to):
         'recall': [recall],
         'F1 score': [f1]
     })
-
-    if not os.path.exists(table_to):
-        os.mkdir(table_to)
     test_scores.to_csv(os.path.join(table_to, "test_scores.csv"), index=False)
 
     # Confusion matrix 
@@ -56,9 +53,6 @@ def test_evaluation(model, X_test, y_test, pos_label, plot_to, table_to):
         y_test,
         values_format="d"
     )
-
-    if not os.path.exists(plot_to):
-        os.mkdir(plot_to)
     confusion_matrix.figure_.savefig(os.path.join(plot_to, "confusion_matrix.png"))
 
     # Precision-recall Curve

@@ -21,7 +21,7 @@ from deepchecks.tabular.checks import PredictionDrift
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.random_search import perform_random_search
-from src.test_evaluation import test_evaluation
+from src.evaluation import evaluation
 
 
 @click.command()
@@ -38,6 +38,12 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     and saves the optimization and evaluation results.'''
     np.random.seed(seed)
     set_config(transform_output="pandas")
+
+    # Create paths to save tables and plots if they do not exist
+    if not os.path.exists(table_to):
+        os.mkdir(table_to)
+    if not os.path.exists(plot_to):
+        os.mkdir(plot_to)
 
     # Read in data & wine_pipe (pipeline object)
     wine_train = pd.read_csv(train_data)
@@ -81,14 +87,11 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
 
     cv_df = cv_df[~cv_df['index'].isin(["fit_time", "score_time"])]
     cv_df = cv_df.set_index('index').T
-
-    if not os.path.exists(table_to):
-        os.mkdir(table_to)
     cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"), index=False)
 
     # Results
     # call test_evalutaion function to evaluate test scores, plot confusion matrix and PR-curve
-    test_evaluation(random_search, X_test, y_test, "red", plot_to, table_to)
+    evaluation(random_search, X_test, y_test, "red", plot_to, table_to)
 
     # Prediction drift check
     wine_train_ds = Dataset(wine_train, label="color", cat_features=[])
