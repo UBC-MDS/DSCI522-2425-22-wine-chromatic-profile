@@ -74,20 +74,20 @@ where you launched the container, and then type `docker compose rm`
 ```
    python scripts/download.py \
       --id 186 \
-      --save_to ./data/wine.csv
+      --save_to ./data/raw/wine.csv
 
    python scripts/clean_n_split_data.py \
-      --raw-data ./data/wine.csv
+      --raw-data ./data/raw/wine.csv
    
    python scripts/validation_before_split.py \
       --file_name wine.csv \
-      --data_path ./data/
+      --data_path ./data/raw
 
 ```
 4.2 Run EDA
 ```
    python scripts/eda_n_correlation_check.py \
-      --train-file ./data/wine_train.csv \
+      --train-file ./data/proc/wine_train.csv \
       --output-img ./results/figures \
       --output-table ./results/tables
 ```
@@ -97,8 +97,8 @@ where you launched the container, and then type `docker compose rm`
       --pipe-to ./results/models
 
    python scripts/model_evaluation_wine_predictor.py \
-      --train-data ./data/wine_train.csv \
-      --test-data ./data/wine_test.csv \
+      --train-data ./data/proc/wine_train.csv \
+      --test-data ./data/proc/wine_test.csv \
       --pipeline-path ./results/models/wine_pipeline.pickle \
       --table-to ./results/tables \
       --plot-to ./results/figures
@@ -108,6 +108,9 @@ where you launched the container, and then type `docker compose rm`
    quarto render report/report.qmd --to html
    quarto render report/report.qmd --to pdf
 ```
+
+# License
+This project was created with the [`MIT License`](LICENSE.md)
 
 # References
 Cortez P, Cerdeira A, Almeida F, Matos T, Reis J. Wine Quality [dataset]. 2009. UCI Machine Learning Repository. Available from: https://doi.org/10.24432/C56S3T.
