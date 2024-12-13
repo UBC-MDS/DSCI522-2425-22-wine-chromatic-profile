@@ -110,9 +110,15 @@ The Python programming language [@python3reference] and the following libraries 
 ___
 ## Results   
 
-To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class (@fig-feat-dist). While most predictors showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.
+To evaluate the usefulness of each feature in predicting wine color, we visualized their distributions in the training dataset, color-coded by class (@fig-feat-dist). 
 
-We also examined multicollinearity among predictors (@fig-feat-cor), initially identifying high correlations between `alcohol and quality`, as well as `total sulfur dioxide and free sulfur dioxide`. However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights.
+The feature distributions (@fig-feat-dist) reveals significant differences between red and white wines across multiple features. For instance, red wines generally exhibit higher levels of volatile acidity, citric acid, and chlorides, while white wines tend to have higher residual sugar, free sulfur dioxide, and total sulfur dioxide. Alcohol content shows a near-normal distribution for both wine types, with white wines displaying a broader range and slightly higher peaks at lower alcohol levels. Interestingly, alcohol is positively correlated with wine quality, which, along with pH (lower for red wines), might plays a key role in determining the color of wines. Sulphates shows left skewed shape, with red wines showing slightly higher concentrations.
+
+While most predictors showed some overlap, notable differences were observed in their central tendencies and spreads. Features like wine quality and residual sugar exhibited less distinction between classes, but we retained them, anticipating that their interactions with other features might enhance predictive power.
+
+We also examined multicollinearity among predictors (@fig-feat-cor), initially identifying high correlations between `alcohol and quality`, as well as `total sulfur dioxide and free sulfur dioxide`. A closer inspection of other features revealed moderate correlations between `density and residual sugar`, reflecting the physical influence of sugar content on the density of wine. Similarly, `sulphates and chlorides` displayed a moderate positive correlation, potentially due to their combined impact on wine preservation and stability. Furthermore, `volatile acidity and quality ` showed a negative correlation , aligning with the perception that high levels of volatile acidity can degrade the sensory appeal of wine.
+
+However, further validation using Deepchecks confirmed that none of these correlations exceeded the threshold of 0.8. As a result, all features were retained in the model to leverage potential interactions and maximize predictive insights. By including all predictors, the model is better positioned to capture both individual and joint effects of features, leading to a more comprehensive understanding of the factors influencing wine quality.
 
 ![Distribution of Features per Target Class](../results/figures/feature_densities_by_class.png){#fig-feat-dist}
 
@@ -154,7 +160,9 @@ Markdown(test_results.to_markdown())
 ___
 ## Discussion  
 
-The confusion matrix (@fig-confusion) confirms that the number of false positives and false negatives is low, and the model achieved an impressive test accuracy of `{python} round(test_accuracy, 3)`. The precision-recall (PR) curve (@fig-pr) further demonstrates the model's robust performance across various thresholds (AP = 0.99), supported by a high test precision of `{python} test_precision` and test recall of `{python} test_recall`. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
+Based on the information from (@fig-confusion) and (@fig-pr), the added insights include that the model achieves excellent classification performance for wine color prediction. From the confusion matrix (@fig-confusion), it is evident that the number of false positives (predicted red but actually white) and false negatives (predicted white but actually red) is minimal. The test accuracy reaches an impressive `{python} round(test_accuracy, 3)`, demonstrating that the model performs reliably in distinguishing wine types.
+
+The precision-recall (PR) curve (@fig-pr) further demonstrates the model's robust performance across various thresholds (AP = 0.99), supported by a high test precision of `{python} test_precision` and test recall of `{python} test_recall`. With an AP score of 0.99, the model exhibits near-perfect precision and recall balance. This indicates that at most thresholds, the model maintains high precision while effectively capturing almost all true positive cases, minimizing false negatives. These metrics collectively indicate that the model is highly effective at differentiating between wine colors.
 
 The near-perfect results on the test data exceeded our expectations, as we anticipated more variability in performance, particularly with recall and precision both exceeding `{python} round(test_recall, 2) - 0.01`.  
 
