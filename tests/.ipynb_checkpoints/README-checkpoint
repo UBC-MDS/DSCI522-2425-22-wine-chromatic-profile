@@ -4,5 +4,3 @@ pytest -v test_random_search.py \
     --pipeline_path=../results/models/wine_pipeline.pickle
 
 pytest test_validate_column_names.py 
-
-pytest test_split_data.py
