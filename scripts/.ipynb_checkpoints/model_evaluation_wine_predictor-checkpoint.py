@@ -8,20 +8,20 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn import set_config
+from sklearn.pipeline import make_pipeline
 from sklearn.metrics import (
     ConfusionMatrixDisplay, PrecisionRecallDisplay, 
     make_scorer, recall_score, precision_score, f1_score, 
     accuracy_score
 )
 
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import (
+    cross_validate,
+    RandomizedSearchCV,
+)
+from scipy.stats import loguniform
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.checks import PredictionDrift
-
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from src.random_search import perform_random_search
-
 
 @click.command()
 @click.option('--train-data', type=str, help="Path to train data")
@@ -59,10 +59,21 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     }
 
     # Hyperparameter Optimization with RandomizedSearchCV via F1 scoring
-    random_search, best_estimator = perform_random_search(wine_pipe, X_train, y_train, seed, 
-        './results/models/wine_random_search.pickle'
+    param_grid = {
+        "logisticregression__C": loguniform(1e-1, 10)
+    }
+
+    random_search = RandomizedSearchCV(
+        wine_pipe,
+        param_grid,
+        n_iter = 10,
+        verbose = 1,
+        n_jobs = -1,
+        random_state = seed,
+        return_train_score = True, 
+        scoring = make_scorer(f1_score, pos_label = "red")
     )
-    
+    random_search.fit(X_train, y_train)
     random_search_df = pd.DataFrame(random_search.cv_results_)[
         [
             "mean_train_score",
@@ -73,6 +84,10 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
         ]
     ].set_index("rank_test_score").sort_index().T
     random_search_df.to_csv(os.path.join(table_to, "random_search.csv"))
+
+    pickle.dump(random_search, open("./results/models/wine_random_search.pickle", "wb"))
+
+    best_estimator = random_search.best_estimator_
 
     cv_df = pd.DataFrame(
         cross_validate(best_estimator, X_train, y_train, cv = 5, scoring = scoring)

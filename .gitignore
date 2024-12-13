@@ -1,5 +1,7 @@
 /.ipynb_checkpoints
 /analysis/.ipynb_checkpoints/
-
+/report/.ipynb_checkpoints/
+/results/figures/.ipynb_checkpoints
 .DS_Store
 */.DS_Store
+*/__pycache__

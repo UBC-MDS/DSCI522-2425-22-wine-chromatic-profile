@@ -28,7 +28,12 @@ def main(train_file, output_img, output_table):
 
     # Save feature datatypes and summary statistics
     datatype_path = os.path.join(output_table, "feature_datatypes.csv")
-    train_df.info(buf=open(datatype_path, 'w'))
+    info_df = pd.DataFrame({
+        "Column": train_df.columns,
+        "Non-Null Count": [train_df[col].notnull().sum() for col in train_df.columns],
+        "Data Type": [train_df[col].dtype for col in train_df.columns]
+    })
+    info_df.to_csv(datatype_path, index=False)
     print(f"Feature datatypes saved at: {datatype_path}")
 
     summary_path = os.path.join(output_table, "summary_statistics.csv")
@@ -40,7 +45,7 @@ def main(train_file, output_img, output_table):
 
     # Figure 1: Distribution of Features per Target Class
     dist_plot = aly.dist(train_df, color = "color").properties(
-        title="Distribution of Features per Target Class"
+        title=""
     )
     dist_plot_path = os.path.join(output_img, "feature_densities_by_class.png")
     dist_plot.save(dist_plot_path, scale_factor=2.0)
@@ -49,7 +54,7 @@ def main(train_file, output_img, output_table):
     # Figure 2: Correlation between Features
     corr_matrix = train_df.drop(columns=['color']).corr()
     corr_plot = aly.corr(corr_matrix).properties(
-        title="Correlation between Wine Color Prediction Features"
+        title=""
     )
     corr_plot_path = os.path.join(output_img, "feature_correlation.png")
     corr_plot.save(corr_plot_path, scale_factor=2.0)

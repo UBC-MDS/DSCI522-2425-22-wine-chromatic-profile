@@ -1,0 +1,14 @@
+Column,Non-Null Count,Data Type
+fixed_acidity,3724,float64
+volatile_acidity,3724,float64
+citric_acid,3724,float64
+residual_sugar,3724,float64
+chlorides,3724,float64
+free_sulfur_dioxide,3724,float64
+total_sulfur_dioxide,3724,float64
+density,3724,float64
+pH,3724,float64
+sulphates,3724,float64
+alcohol,3724,float64
+quality,3724,int64
+color,3724,object
