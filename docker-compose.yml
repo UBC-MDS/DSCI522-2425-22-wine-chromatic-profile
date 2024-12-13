@@ -4,8 +4,8 @@ services:
     ports:
       - "8888:8888" 
     volumes:
-      - "${PWD}:/app/data"
-    working_dir: /app
+      - "${PWD}:/app/data" 
+    working_dir: /app/data
     deploy:
       resources:
         limits:
