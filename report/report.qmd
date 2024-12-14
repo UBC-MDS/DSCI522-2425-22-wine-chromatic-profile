@@ -79,15 +79,17 @@ test_f1 = round(float(test_results["F1 score"]), 3)
 
 ## Summary
 
-In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. A logistic regression model with balanced class weights was implemented and optimized through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on unseen test data. The precision-recall analysis indicated high precision and recall scores (above `{python} round(test_recall, 2) - 0.01`), further corroborated by the confusion matrix, which showed minimal misclassifications.
+In this project, we developed a machine learning model to predict the color of wine (red or white) using its physiochemical properties such as acidity, pH, sugar content, and alcohol level. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry. As such, we implemented a logistic regression model with balanced class weights and optimized it through hyperparameter tuning. The final model performed exceptionally well, achieving an accuracy of `{python} round(best_model_accuracy, 2)` on the test data. The precision-recall analysis indicated high precision and recall scores (above `{python} round(test_recall, 2) - 0.01`), further corroborated by the confusion matrix which showed minimal misclassifications.
 
-While the model demonstrated strong predictive accuracy, the near-perfect results raise potential concerns about overfitting, suggesting further evaluation on truly unseen data is necessary. This work emphasizes the potential for data-driven tools to optimize wine classification processes, offering a scalable and efficient approach for the wine industry.
+While the model demonstrated strong predictive accuracy, the near-perfect results raised potential concerns about possible overfitting on the existing data, suggesting further evaluation on truly unseen data is necessary. Moreover, the assumptions that the logistic regression model made (e.g. multicolinearity and linearly separable data) can possibly hinder the future performance of the model if the assumptions do not hold for any new unseen data. With the limitations of our model, we further stressed on the importance of investigating the anomalous results that could potentially bring us new insights on how the physiochemical properties of a wine affect its chromatic profile.
 
 ------------------------------------------------------------------------
 
 ## Introduction
 
-Wine classification plays a crucial role in both production and quality assessment, yet traditional methods often rely on subjective evaluations by experts. Therefore, this project seeks to answer **whether we accurately predict the color of wine using its physiochemical properties**.
+Wine classification plays a crucial role in both production and quality assessment. It is a key step to enforce quality assurance and maintain the excellence of the product. However, traditional methods often rely on subjective evaluations and extensive testings by experts. To ease the wine quality assessment process, this project seeks to answer the following question:
+
+**How do we accurately predict the chromatic profile of wine using its physiochemical properties**?
 
 Developing a machine learning model for wine classification has several advantages. For winemakers, it could provide a scalable method for analyzing large datasets, identifying trends, and optimizing production processes. For consumers and retailers, it could serve as a tool to verify wine characteristics without requiring advanced laboratory equipment. Through this project, we aim to contribute to the industry's adoption of data-driven approaches, enabling efficient, reproducible, and cost-effective methods for wine analysis.
 
@@ -164,6 +166,8 @@ Markdown(test_results.to_markdown())
 ------------------------------------------------------------------------
 
 ## Discussion
+
+### Stengths
 
 Our model performs exceptionally well in predicting the colors of the wines as the model achieved an impressive test accuracy of `{python} round(test_accuracy, 3)`. It fits our goal of accurately classifying a wine color, whether it be red or white, without human judgement. This can serve as a reliable and efficient algorithm for wine analysis as long as we have sufficient information of the wine.
 
