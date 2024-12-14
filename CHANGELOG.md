@@ -42,18 +42,18 @@
 ### Peer Review Feedback
 - **Issue 1:** docker URL takes you to a screen with just a 'data' folder.  <br>
 **Fix 1:**: Updated docker compose file <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/blob/d37bba2193b7e2b15fde5d52fc55361c8232dd0d/docker-compose.yml)
 
 - **Issue 2:** The directory contains cache files, such as .ipynb_checkpoints, that are being pushed to GitHub.  <br>
 **Fix 2:**: Updated .gitignore to not track ipynb_checkpoints <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
 
 - **Issue 3:** Include a license section with links directly in the README.  <br>
 **Fix 3:**: Updated README with a small license section <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
 
 - **Issue 4:** The introduction and conclusion lack details regarding the potential use cases of the data and the broader impact of the model..  <br>
-**Fix 4:**: Updated Introduction and Discussion to emphasizemore on use cases and broader importance <br>
+**Fix 4:**: Updated Introduction and Summary to emphasize more on use cases and broader importance <br>
 [Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/1ea412b46c309bede9839263c5b273db046533cd)
 
 - **Issue 5:** A little more flushed-out explanation of the figures.  <br>
