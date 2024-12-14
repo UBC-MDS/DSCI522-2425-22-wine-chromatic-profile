@@ -16,19 +16,19 @@
 #### Data analysis
 - **Issue 4:** Abstract/Summary (1) Does not clearly report the major findings.(2) Does not discuss importance and limitations of findings <br>
 **Fix 4:**: added necessary information to the Abstract section in the report <br>
-[Commit Link](INSERT)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/8fbb5e7b869f735298af7b2d4becdaef04406de7)
 
 - **Issue 5:** Introduction did not reference the data set when referring to it. <br>
 **Fix 5:**: added necessary information to the Introduction section in the report <br>
-[Commit Link](INSERT)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/pull/42/commits/d1027594cdc0eb64a6454a6d5f974d3d47322d24#diff-fa254b0baa203c4613b5d7f41b686e1e167c0c4a04337d13198e397607cff187)
 
 - **Issue 6:** Discussion (1) Findings from project are not linked back to the application domain. (2) Assumptions and limitations of methods and findings are not discussed. <br>
 **Fix 6:**: added necessary information to the Discussion section in the report <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/6e6b8ab327995610366721fcbc5ccc8a811e0949)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/pull/71/commits/6e5a2095e6c59f07a0d8a1f634e6fe2252d87c6a)
 
 - **Issue 7:** Spelling and grammar, there were just a couple spelling or grammatical errors. <br>
 **Fix 7:**: Report editted and reviewed for grammar and spelling <br>
-[Repo Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/main/report)
+[Repo Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/pull/71/commits/8b0f2dfc62164104e4e451de992fe53184a53fe1)
 
 ### Milestone 2 Feedback
 
