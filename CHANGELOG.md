@@ -61,5 +61,4 @@
 [Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/29e1e5b9427cc202c8119da2a91e5e656b47063e#diff-059ae229d14bfbf15abe1e3587fcff94884f9497fffa3b5bdf6c2ff3e94f44d4R113)
 
 - **Issue 6:** The PDF link in Other Formats under the html report is not working.  <br>
-**Fix 6:**: Link works now <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
+**Fix 6:**: Not Fixed. Not within scope of this project <br>
