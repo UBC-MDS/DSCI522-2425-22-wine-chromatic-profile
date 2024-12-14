@@ -21,6 +21,7 @@ from deepchecks.tabular.checks import PredictionDrift
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.random_search import perform_random_search
+from src.evaluation import evaluation
 
 
 @click.command()
@@ -37,6 +38,12 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
     and saves the optimization and evaluation results.'''
     np.random.seed(seed)
     set_config(transform_output="pandas")
+
+    # Create paths to save tables and plots if they do not exist
+    if not os.path.exists(table_to):
+        os.mkdir(table_to)
+    if not os.path.exists(plot_to):
+        os.mkdir(plot_to)
 
     # Read in data & wine_pipe (pipeline object)
     wine_train = pd.read_csv(train_data)
@@ -80,49 +87,11 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
 
     cv_df = cv_df[~cv_df['index'].isin(["fit_time", "score_time"])]
     cv_df = cv_df.set_index('index').T
-
-    if not os.path.exists(table_to):
-        os.mkdir(table_to)
     cv_df.to_csv(os.path.join(table_to, "cross_validation.csv"), index=False)
 
     # Results
-    # Compute accuracy on test data
-    predictions = best_estimator.predict(X_test)
-    accuracy = accuracy_score(y_test, predictions)
-    precision = precision_score(y_test, predictions, pos_label="red")
-    recall = recall_score(y_test, predictions, pos_label="red")
-    f1 = f1_score(y_test, predictions, pos_label="red")
-
-    test_scores = pd.DataFrame({
-        'accuracy': [accuracy],
-        'precision': [precision],
-        'recall': [recall],
-        'F1 score': [f1]
-    })
-
-    test_scores.to_csv(os.path.join(table_to, "test_scores.csv"), index=False)
-
-    # Confusion matrix 
-    confusion_matrix = ConfusionMatrixDisplay.from_estimator(
-        random_search,
-        X_test,
-        y_test,
-        values_format="d"
-    )
-
-    if not os.path.exists(plot_to):
-        os.mkdir(plot_to)
-    confusion_matrix.figure_.savefig(os.path.join(plot_to, "confusion_matrix.png"))
-
-    # Precision-recall Curve
-    pr_curve = PrecisionRecallDisplay.from_estimator(
-        random_search,
-        X_test,
-        y_test,
-        pos_label="red",
-        name='wine_quality', 
-    )
-    pr_curve.figure_.savefig(os.path.join(plot_to, "pr_curve.png"))
+    # call test_evalutaion function to evaluate test scores, plot confusion matrix and PR-curve
+    evaluation(random_search, X_test, y_test, "red", plot_to, table_to)
 
     # Prediction drift check
     wine_train_ds = Dataset(wine_train, label="color", cat_features=[])
