@@ -91,7 +91,7 @@ def main(train_data, test_data, pipeline_path, table_to, plot_to, seed):
 
     # Results
     # call test_evalutaion function to evaluate test scores, plot confusion matrix and PR-curve
-    evaluation(random_search, X_test, y_test, "red", plot_to, table_to)
+    evaluation(random_search, X_test, y_test, "red", table_to, plot_to)
 
     # Prediction drift check
     wine_train_ds = Dataset(wine_train, label="color", cat_features=[])
