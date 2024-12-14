@@ -52,13 +52,13 @@
 **Fix 3:**: Updated README with a small license section <br>
 [Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
 
-- **Issue 4:** A little more flushed-out explanation of the figures.  <br>
-**Fix 4:**: More flushed out explanation added <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
+- **Issue 4:** The introduction and conclusion lack details regarding the potential use cases of the data and the broader impact of the model..  <br>
+**Fix 4:**: Updated Introduction and Discussion to emphasizemore on use cases and broader importance <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/1ea412b46c309bede9839263c5b273db046533cd)
 
-- **Issue 5:** The introduction and conclusion lack details regarding the potential use cases of the data and the broader impact of the model..  <br>
-**Fix 5:**: Updated Introduction and Discussion to emphasizemore on use cases and broader importance <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
+- **Issue 5:** A little more flushed-out explanation of the figures.  <br>
+**Fix 5:**: More flushed out explanation added <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/29e1e5b9427cc202c8119da2a91e5e656b47063e#diff-059ae229d14bfbf15abe1e3587fcff94884f9497fffa3b5bdf6c2ff3e94f44d4R113)
 
 - **Issue 6:** The PDF link in Other Formats under the html report is not working.  <br>
 **Fix 6:**: Link works now <br>
