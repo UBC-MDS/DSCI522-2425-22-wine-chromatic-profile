@@ -34,15 +34,32 @@
 
 #### Reproducibility
 - **Issue 1:** Latest tag was used for docker. This is not ideal because if the user has latest locally, but there is a newer version on the container registry, then Docker will not pull it.<br>
-**Fix 1:**: ??? <br>
-[Commit Link](INSERT)
+**Fix 1:**: No Fix. In our readme, we explicitly tell the user to remove the existing local files first. Therefore, we do not run into this issue. <br>
 
+### Milestone 2 Feedback
+- N/A
 
-#### Peer Review Feedback
-- **Issue 1:** .gitignore needs to be updated<br>
+### Peer Review Feedback
+- **Issue 1:** docker URL takes you to a screen with just a 'data' folder.  <br>
 **Fix 1:**: Updated docker compose file <br>
-[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/8298ca39f9a149c78408b036c89eb7eed3649f39#diff-e45e45baeda1c1e73482975a664062aa56f20c03dd9d64a827aba57775bed0d3)
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
 
-- **Issue 2:** docker URL takes you to a screen with just a 'data' folder.  <br>
-**Fix 2:**: Updated to not track ipynb_checkpoints <br>
+- **Issue 2:** The directory contains cache files, such as .ipynb_checkpoints, that are being pushed to GitHub.  <br>
+**Fix 2:**: Updated .gitignore to not track ipynb_checkpoints <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
+
+- **Issue 3:** Include a license section with links directly in the README.  <br>
+**Fix 3:**: Updated README with a small license section <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/tree/d37bba2193b7e2b15fde5d52fc55361c8232dd0d)
+
+- **Issue 4:** A little more flushed-out explanation of the figures.  <br>
+**Fix 4:**: More flushed out explanation added <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
+
+- **Issue 5:** The introduction and conclusion lack details regarding the potential use cases of the data and the broader impact of the model..  <br>
+**Fix 5:**: Updated Introduction and Discussion to emphasizemore on use cases and broader importance <br>
+[Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
+
+- **Issue 6:** The PDF link in Other Formats under the html report is not working.  <br>
+**Fix 6:**: Link works now <br>
 [Commit Link](https://github.com/UBC-MDS/DSCI522-2425-22-wine-chromatic-profile/commit/119e66c9c678f4fb7c6465323f793a482b5baaf2)
