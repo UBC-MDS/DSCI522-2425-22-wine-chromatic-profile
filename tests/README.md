@@ -1,4 +1,4 @@
-Run each test one by one in the tests/ directory
+Run each test one by one in the `tests/` directory
 ```
 pytest -v test_random_search.py \
     --train_data=../data/proc/wine_train.csv \
