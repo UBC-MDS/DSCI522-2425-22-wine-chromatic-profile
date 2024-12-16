@@ -110,7 +110,8 @@ where you launched the container, and then type `docker compose rm`
 ```
 
 ### Running the test suite
-Use the same docker compose up command as described in the Running the analysis section above to launch Jupyter lab. Tests are run using the pytest command in the root of the project. More details about the test suite can be found in the tests directory.
+Use the same docker compose up command as described in the Running the analysis section above to launch Jupyter lab. Tests are run using the pytest command in the `tests/` directory. More details about the test suite can be found in `tests/`.
+
 
 # License
 This project was created with the [`MIT License`](LICENSE.md)

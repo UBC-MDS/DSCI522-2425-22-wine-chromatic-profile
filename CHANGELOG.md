@@ -36,7 +36,7 @@
 - **Issue 1:** Latest tag was used for docker. This is not ideal because if the user has latest locally, but there is a newer version on the container registry, then Docker will not pull it.<br>
 **Fix 1:**: No Fix. In our readme, we explicitly tell the user to remove the existing local files first. Therefore, we do not run into this issue. <br>
 
-### Milestone 2 Feedback
+### Milestone 3 Feedback
 - N/A
 
 ### Peer Review Feedback
