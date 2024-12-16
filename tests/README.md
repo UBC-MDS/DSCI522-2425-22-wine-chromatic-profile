@@ -1,5 +1,5 @@
-Use the bash command below to change directory to `tests/`
-```cd tests```
+Use the bash command below to change directory from root to `tests/`  
+`cd tests`
 
 Run each test one by one in the `tests/` directory:
 ```
